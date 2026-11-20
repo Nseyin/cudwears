@@ -15,6 +15,7 @@ create table if not exists products(
   active boolean default true, created_at timestamptz default now());
 alter table products add column if not exists kind text default '';
 alter table products add column if not exists lead text default '';
+alter table products add column if not exists featured boolean default false;
 alter table products drop constraint if exists products_cat_check;
 alter table products add constraint products_cat_check check (cat in ('clothing','footwear','accessories'));
 
@@ -41,7 +42,7 @@ create table if not exists settings(
   id int primary key default 1 check (id=1), deposit_pct int default 60 check (deposit_pct between 0 and 100),
   methods jsonb default '[]', lead_default text default '4-6 working days', delivery_info text default '');
 insert into settings(id,methods,delivery_info) values (1,
-  '[{"id":"opay","label":"OPay","details":"Account number and name: add yours in Admin > Settings"},{"id":"pocket","label":"PocketApp","details":"Add your PocketApp details in Admin > Settings"},{"id":"bank","label":"Bank transfer","details":"Add your bank name, account number and account name in Admin > Settings"}]',
+  '[{"id":"opay","label":"OPay","bank":"OPay","account":"","name":"","link":"","details":""},{"id":"pocket","label":"PocketApp","bank":"","account":"","name":"","link":"","details":""},{"id":"bank","label":"Bank transfer","bank":"","account":"","name":"","link":"","details":""}]',
   E'Delivery time starts after your deposit is confirmed.\nWe will call or message you on WhatsApp before delivery.\nBalance is paid before or on delivery.')
 on conflict (id) do nothing;
 

@@ -45,5 +45,28 @@
     });
   }
   g.CW = { COLORS: COLORS, CATS: CATS, KINDS: KINDS, nearest: nearest, recolor: recolor, recolorData: recolorData, hexRgb: hexRgb, rgbHsl: rgbHsl };
+
+  /* ---- touch feel: haptic tick (Android vibrates; iPhone Safari uses its switch-toggle tick), toast, reliable copy ---- */
+  var hx;
+  function haptic(ms) {
+    try { if (navigator.vibrate) { navigator.vibrate(ms || 8); return; } } catch (e) {}
+    try { if (!hx) { var i = document.createElement('input'); i.type = 'checkbox'; i.setAttribute('switch', ''); i.id = 'cw-hx'; hx = document.createElement('label'); hx.htmlFor = 'cw-hx'; hx.style.cssText = 'position:fixed;left:-9999px;top:0;width:1px;height:1px;opacity:0;pointer-events:none'; hx.appendChild(i); document.body.appendChild(hx); } hx.click(); } catch (e) {}
+  }
+  function toast(m) { var t = document.createElement('div'); t.className = 'toast'; t.textContent = m; document.body.appendChild(t); setTimeout(function () { t.remove(); }, 1800); }
+  function manualCopy(txt) {
+    var b = document.createElement('div'); b.className = 'copybox'; var l = document.createElement('div'); l.textContent = 'Press and hold the text below, then tap Copy:'; var i = document.createElement('input'); i.readOnly = true; i.value = txt;
+    var c = document.createElement('button'); c.className = 'btn brass'; c.textContent = 'Done'; c.onclick = function () { b.remove(); }; b.appendChild(l); b.appendChild(i); b.appendChild(c); (document.querySelector('.sheet.on') || document.body).appendChild(b); i.focus(); i.select(); try { i.setSelectionRange(0, txt.length); } catch (e) {}
+  }
+  function legacyCopy(txt) {
+    var host = document.querySelector('.sheet.on .panel') || document.body, a = document.createElement('textarea'); a.value = txt; a.setAttribute('readonly', ''); a.style.cssText = 'position:fixed;top:0;left:0;width:1px;height:1px;opacity:0;font-size:16px';
+    host.appendChild(a); a.focus({ preventScroll: true }); a.select(); try { a.setSelectionRange(0, txt.length); } catch (e) {} var ok = false; try { ok = document.execCommand('copy'); } catch (e) {} a.remove(); return ok;
+  }
+  function copy(txt, msg) {
+    txt = String(txt); var done = function () { toast(msg || 'Copied'); };
+    if (navigator.clipboard && window.isSecureContext) navigator.clipboard.writeText(txt).then(done, function () { legacyCopy(txt) ? done() : manualCopy(txt); });
+    else legacyCopy(txt) ? done() : manualCopy(txt);
+  }
+  if (typeof document !== 'undefined') document.addEventListener('click', function (e) { if (e.target.closest && e.target.closest('button,.chip,.card,.pc,.rc,.sw,a.btn,.heart,.tile,.feat,summary')) haptic(); }, true);
+  g.CW.haptic = haptic; g.CW.toast = toast; g.CW.copy = copy;
   if (typeof module !== 'undefined') module.exports = g.CW;
 })(typeof window !== 'undefined' ? window : globalThis);
