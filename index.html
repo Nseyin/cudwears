@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>CUDWEARS | Clothing &amp; Footwear</title>
+<meta name="description" content="CUDWEARS: clothing designs and footwear. Pick your colour, add your modifications and order in a tap.">
+<meta property="og:title" content="CUDWEARS | Clothing &amp; Footwear"><meta property="og:description" content="Pick your colour, add your modifications and order in a tap.">
+<meta name="theme-color" content="#0F1E33"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Newsreader:ital,wght@0,400..600;1,400..600&display=swap">
+<link rel="stylesheet" href="css/app.css"></head><body>
+<header class="top"><div class="brand">CUD<b>WEARS</b></div><button class="chip" id="shareSite" aria-label="Share">Share</button></header>
+<main>
+ <section class="view on" id="v-shop">
+  <div class="hero"><h1>Wear it <em>your way</em></h1><p>Choose a design, pick your colour, add your own modifications. We make it and deliver.</p></div>
+  <input class="search" id="q" type="search" placeholder="Search designs, dresses, sandals…" aria-label="Search">
+  <div class="chips" id="cats"></div><div class="chips" id="subs"></div>
+  <div class="grid" id="grid"></div>
+ </section>
+ <section class="view" id="v-track"><h2>Track your order</h2><p class="note">Use the order code we gave you and the phone number you ordered with.</p>
+  <form class="box" id="trackForm"><div class="two"><input class="f" id="tCode" placeholder="Order code e.g. CW-1A2B3C" autocapitalize="characters"><input class="f" id="tPhone" type="tel" placeholder="Phone number"></div><p class="err" id="tErr" hidden></p><button class="btn brass" style="margin-top:10px">Track</button></form>
+  <div id="tOut"></div></section>
+ <section class="view" id="v-help"><h2>Help &amp; custom requests</h2><p class="note">Book a custom design or fitting, request a return, report a problem, or leave a comment.</p>
+  <form class="box" id="helpForm"><div class="lbl">What do you need?</div>
+   <select class="f" id="hKind"><option value="booking">Book a custom design / fitting</option><option value="return">Return request</option><option value="complaint">Complaint</option><option value="comment">Comment / feedback</option></select>
+   <div class="two" style="margin-top:10px"><input class="f" id="hName" placeholder="Your name"><input class="f" id="hPhone" type="tel" placeholder="Phone number"></div>
+   <input class="f" id="hCode" placeholder="Order code (for returns and complaints)" style="margin-top:10px" autocapitalize="characters">
+   <input class="f" id="hDate" type="date" style="margin-top:10px">
+   <textarea class="f" id="hText" placeholder="Tell us more" style="margin-top:10px"></textarea>
+   <p class="err" id="hErr" hidden></p><p class="note" id="hOk" hidden></p><button class="btn brass" style="margin-top:10px">Send</button></form></section>
+</main>
+<nav class="nav"><button class="on" data-v="shop"><span>◧</span>Shop</button><button data-v="track"><span>⌖</span>Track</button><button data-v="help"><span>✎</span>Help</button></nav>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="scrim" id="scrim"></div><div class="panel" id="panel"></div></div>
+<script src="config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const sb=supabase.createClient(CFG.url,CFG.key),WA=CFG.wa,$=s=>document.querySelector(s),naira=n=>'₦'+Number(n).toLocaleString('en-NG');
+const E=(t,a={},k=[])=>{const n=document.createElement(t);for(const[x,v]of Object.entries(a)){if(x==='text')n.textContent=v;else if(x.startsWith('on'))n.addEventListener(x.slice(2),v);else if(v===true)n.setAttribute(x,'');else if(v!==false&&v!=null)n.setAttribute(x,v)}k.flat().forEach(c=>c!=null&&n.append(c));return n};
+const post=async(p,b)=>{try{
+ if(p==='orders'){const{data,error}=await sb.rpc('place_order',{p_type:b.type,p_name:b.name,p_phone:b.phone,p_address:b.address||'',p_note:b.note||'',p_items:b.items||[]});return error?{error:error.message}:data}
+ const{error}=await sb.from('feedback').insert({kind:b.kind,code:(b.code||'').toUpperCase(),name:b.name,phone:b.phone||'',text:b.text});return error?{error:'Add your name and a message.'}:{ok:true}}catch(e){return{error:'Network problem. Try again.'}}};
+let P=[],cat='',sub='',q='';
+const CATS=[['','All'],['clothing','Clothing'],['footwear','Footwear']];
+const img=id=>CFG.url+'/storage/v1/object/public/products/'+id;
+function show(){$('#cats').replaceChildren(...CATS.map(([v,l])=>E('button',{class:'chip'+(cat===v?' on':''),text:l,onclick:()=>{cat=v;sub='';show()}})));
+ const subs=[...new Set(P.filter(p=>!cat||p.cat===cat).map(p=>p.sub).filter(Boolean))];
+ $('#subs').replaceChildren(...(subs.length?[E('button',{class:'chip'+(!sub?' on':''),text:'Everything',onclick:()=>{sub='';show()}}),...subs.map(s=>E('button',{class:'chip'+(sub===s?' on':''),text:s,onclick:()=>{sub=s;show()}}))]:[]));
+ const L=P.filter(p=>(!cat||p.cat===cat)&&(!sub||p.sub===sub)&&(!q||(p.name+' '+p.sub+' '+p.desc).toLowerCase().includes(q)));
+ $('#grid').replaceChildren(...(L.length?L.map(card):[E('div',{class:'empty',style:'grid-column:1/-1',text:P.length?'Nothing matches yet. Try another filter.':'New designs are landing soon. Check back shortly.'})]))}
+function card(p){return E('button',{class:'card','aria-label':p.name,onclick:()=>openP(p)},[E('div',{class:'ph'},[p.imgs[0]?E('img',{src:img(p.imgs[0]),alt:p.name,loading:'lazy'}):E('span',{text:'👗'})]),E('div',{class:'meta'},[E('b',{text:p.name}),E('small',{text:p.sub||(p.cat==='footwear'?'Footwear':'Clothing')}),E('div',{class:'price',text:naira(p.price)})])])}
+function openSheet(k){$('#panel').replaceChildren(E('button',{class:'x','aria-label':'Close',text:'×',onclick:closeSheet}),E('div',{class:'grab'}),...k.flat(2).filter(Boolean));$('#sheet').classList.add('on');$('#panel').scrollTop=0}
+function closeSheet(){$('#sheet').classList.remove('on');if(location.hash.startsWith('#p='))history.replaceState(null,'',location.pathname)}
+$('#scrim').onclick=closeSheet;addEventListener('keydown',e=>e.key==='Escape'&&closeSheet());
+function chips(list,get,set,multi){const box=E('div',{class:'row'});const draw=()=>box.replaceChildren(...list.map(v=>E('button',{type:'button',class:'chip'+(get(v)?' on':''),text:v,onclick:()=>{set(v);draw()}})));draw();return box}
+function openP(p){
+ const s={colour:p.colours[0]||'',size:'',mods:new Set(),qty:1};history.replaceState(null,'','#p='+p.id);
+ const main=E('div',{class:'main-img'},p.imgs[0]?[E('img',{src:img(p.imgs[0]),alt:p.name})]:[E('span',{text:'👗'})]);
+ const thumbs=p.imgs.length>1?E('div',{class:'thumbs'},p.imgs.map((id,i)=>E('img',{src:img(id),alt:'View '+(i+1),class:i?'':'on',onclick:e=>{main.firstChild.src=img(id);thumbs.querySelectorAll('img').forEach(x=>x.classList.remove('on'));e.target.classList.add('on')}}))):null;
+ const f={n:E('input',{class:'f',placeholder:'Your name',autocomplete:'name'}),ph:E('input',{class:'f',type:'tel',placeholder:'Phone / WhatsApp number',autocomplete:'tel'}),ad:E('textarea',{class:'f',placeholder:'Delivery address (house, street, city, state)'}),note:E('textarea',{class:'f',placeholder:'Your modifications, e.g. shorter sleeves, add pockets, my measurements…'})};
+ const qv=E('span',{text:'1'}),err=E('p',{class:'err',hidden:true}),go=E('button',{class:'btn brass',type:'button',text:'Place order'});
+ const share=E('button',{class:'btn ghost',type:'button',text:'Share',onclick:()=>{const url=location.origin+'/p/'+p.id;navigator.share?navigator.share({title:p.name+' | CUDWEARS',text:p.name+' on CUDWEARS',url}).catch(()=>{}):navigator.clipboard.writeText(url).then(()=>alert('Link copied'))}});
+ go.onclick=async()=>{err.hidden=true;if(p.colours.length&&!s.colour)return fail('Choose a colour.');if(p.sizes.length&&!s.size)return fail('Choose a size.');
+  go.disabled=true;go.textContent='Sending…';const r=await post('orders',{type:'order',name:f.n.value,phone:f.ph.value,address:f.ad.value,items:[{pid:p.id,qty:s.qty,colour:s.colour,size:s.size,mods:[...s.mods],note:f.note.value}]}).catch(()=>({error:'Network problem. Try again.'}));
+  go.disabled=false;go.textContent='Place order';if(r.error)return fail(r.error);try{localStorage.setItem('cw_last',JSON.stringify({code:r.code,phone:f.ph.value}))}catch(e){}done(r)};
+ function fail(m){err.textContent=m;err.hidden=false;err.scrollIntoView({block:'center',behavior:'smooth'})}
+ function done(r){const msg='Hello CUDWEARS, I just ordered '+p.name+' (code '+r.code+').';openSheet([E('div',{class:'empty'},[E('h2',{text:'Order received'}),E('p',{text:'Your order code'}),E('h2',{text:r.code,style:'color:var(--cob);letter-spacing:.1em'}),E('p',{class:'note',text:'Total '+naira(r.total)+'. We will confirm by phone. Keep this code to track your order.'}),E('div',{class:'row',style:'justify-content:center;margin-top:12px'},[E('a',{class:'btn brass',href:'https://wa.me/'+WA+'?text='+encodeURIComponent(msg),target:'_blank',rel:'noopener',text:'Message us on WhatsApp'}),E('button',{class:'btn ghost',text:'Track order',onclick:()=>{closeSheet();nav('track');$('#tCode').value=r.code;$('#tPhone').value=f.ph.value}})])])])}
+ const tot=E('span',{class:'price',text:naira(p.price)});const upd=()=>{qv.textContent=s.qty;tot.textContent=naira(p.price*s.qty)};
+ openSheet([main,thumbs,E('h2',{text:p.name,style:'margin-top:10px'}),E('div',{class:'price',text:naira(p.price)}),p.desc?E('p',{text:p.desc}):null,
+  p.colours.length?[E('div',{class:'lbl',text:'Colour'}),chips(p.colours,v=>s.colour===v,v=>s.colour=v)]:null,
+  p.sizes.length?[E('div',{class:'lbl',text:'Size'}),chips(p.sizes,v=>s.size===v,v=>s.size=v)]:null,
+  p.mods.length?[E('div',{class:'lbl',text:'Modifications (optional)'}),chips(p.mods,v=>s.mods.has(v),v=>s.mods.has(v)?s.mods.delete(v):s.mods.add(v))]:null,
+  E('div',{class:'lbl',text:'Anything else you want changed?'}),f.note,
+  E('div',{class:'lbl',text:'Quantity'}),E('div',{class:'qty'},[E('button',{type:'button','aria-label':'Less',text:'−',onclick:()=>{s.qty=Math.max(1,s.qty-1);upd()}}),qv,E('button',{type:'button','aria-label':'More',text:'+',onclick:()=>{s.qty=Math.min(20,s.qty+1);upd()}})]),
+  E('div',{class:'lbl',text:'Your details'}),E('div',{class:'two'},[f.n,f.ph]),E('div',{style:'margin-top:10px'},[f.ad]),err,
+  E('div',{class:'row',style:'margin-top:12px;align-items:center'},[go,share,E('span',{style:'margin-left:auto'},['Total ',tot])])])}
+function nav(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));scrollTo(0,0)}
+document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>nav(b.dataset.v));
+$('#q').oninput=e=>{q=e.target.value.toLowerCase().trim();show()};
+$('#shareSite').onclick=()=>{const url=location.origin;navigator.share?navigator.share({title:'CUDWEARS',url}).catch(()=>{}):navigator.clipboard.writeText(url).then(()=>alert('Link copied'))};
+const FLOW=['pending','confirmed','in_production','shipped','delivered'],LAB={pending:'Pending',confirmed:'Confirmed',in_production:'Being made',shipped:'On the way',delivered:'Delivered',failed:'Delivery failed',returned:'Returned',cancelled:'Cancelled'};
+$('#trackForm').onsubmit=async e=>{e.preventDefault();const o=$('#tOut'),er=$('#tErr');er.hidden=true;o.replaceChildren();
+ const r=await sb.rpc('track_order',{p_code:$('#tCode').value,p_phone:$('#tPhone').value}).then(x=>x.data||{error:'No order found. Check the code and phone number.'},()=>({error:'Network problem.'}));
+ if(r.error){er.textContent=r.error;er.hidden=false;return}const i=FLOW.indexOf(r.status);
+ o.append(E('div',{class:'box'},[E('div',{class:'li'},[E('b',{text:r.code}),E('span',{class:'st '+r.status,text:LAB[r.status]||r.status})]),i>-1?E('div',{class:'steps'},FLOW.map((s,k)=>E('i',{class:k<=i?'on':'',text:LAB[s]}))):null,
+  ...r.items.map(x=>E('p',{text:x.qty+' × '+x.name+[x.colour,x.size].filter(Boolean).map(v=>' · '+v).join('')})),r.total?E('p',{class:'price',text:naira(r.total)}):null]))};
+$('#helpForm').onsubmit=async e=>{e.preventDefault();const k=$('#hKind').value,er=$('#hErr'),ok=$('#hOk');er.hidden=ok.hidden=true;
+ const b={name:$('#hName').value,phone:$('#hPhone').value,code:$('#hCode').value,text:$('#hText').value},
+ r=k==='booking'?await post('orders',{type:'booking',name:b.name,phone:b.phone,address:'',note:'Preferred date: '+($('#hDate').value||'any')+'\n'+b.text}):await post('feedback',{...b,kind:k});
+ if(r.error){er.textContent=r.error;er.hidden=false;return}ok.textContent=r.code?'Booking received. Your reference is '+r.code+'. We will call you to confirm.':'Thank you. We have received your message.';ok.hidden=false;$('#helpForm').reset()};
+$('#hKind').onchange=()=>{$('#hDate').hidden=$('#hKind').value!=='booking'};$('#hDate').hidden=false;
+try{const l=JSON.parse(localStorage.getItem('cw_last')||'null');if(l){$('#tCode').value=l.code;$('#tPhone').value=l.phone}}catch(e){}
+sb.from('products').select('*').eq('active',true).order('created_at',{ascending:false}).then(({data:d})=>{P=(d||[]).map(p=>({...p,desc:p.descr,colours:p.colours||[],sizes:p.sizes||[],mods:p.mods||[],imgs:p.imgs||[]}));show();const m=location.hash.match(/^#p=([\w-]+)/);const p=m&&P.find(x=>x.id===m[1]);if(p)openP(p)}).catch(()=>{show()});
+</script></body></html>
