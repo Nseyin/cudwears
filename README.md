@@ -1,35 +1,30 @@
-# CUDWEARS: put it online (about 20 minutes, nothing to install)
+# CUDWEARS: setup and updates
 
-You need three free accounts. Each one has one job:
-- **GitHub** keeps your website files.
-- **Supabase** keeps your products, photos and orders.
-- **Netlify** puts the website on the internet.
+Three free accounts, one job each: **GitHub** keeps the files, **Supabase** keeps products, photos, orders and settings, **Netlify** puts the site online.
 
-## 1. Supabase (your database)
-1. Go to supabase.com, sign up, click **New project**. Name it `cudwears`, make up a database password (save it), pick the closest region (South Africa or London), click Create. Wait until it finishes.
-2. Open the file `setup/supabase.sql` on your computer with Notepad. Change `PUT-YOUR-EMAIL-HERE` to the email you will use to log in as admin. Select everything and copy it.
-3. In Supabase click **SQL Editor** (left side) > **New query**, paste, click **Run**. It should say "Success".
-4. Click **Authentication** > **Users** > **Add user** > **Create new user**. Use the SAME email, make a password, tick **Auto Confirm User**, Create. This is your admin login.
-5. Click **Project Settings** > **API** (or "API Keys"). Copy the **Project URL** and the **anon public** key (newer projects call it "publishable key").
-6. Open `config.js` with Notepad. Paste the URL and key between the quotes. Put your WhatsApp number too. Save.
+## UPDATING a site you already have online (this version)
+1. **Supabase**: open SQL Editor > New query. Open `setup/supabase.sql` in Notepad, copy ALL of it, paste, click Run. It is safe to run again; your products, orders and admin login stay.
+2. **GitHub**: unzip this folder, open your repository, click Add file > Upload files, drag EVERYTHING in (including the new `js` folder), click Commit changes. Netlify updates itself in about a minute. (`config.js` already has your Supabase details.)
+3. **Admin > Settings**: type in your OPay, PocketApp and bank details (customers see them after ordering), check the 60% deposit, and set your usual delivery time and delivery instructions. Save.
+4. Edit each existing product once (Admin > Products > Edit): pick its **Item type** and tick the modification options you want to offer, then Save.
 
-## 2. GitHub (keeps the files)
-1. Sign up at github.com. Click **+** > **New repository**. Name it `cudwears`, click Create repository.
-2. Click **uploading an existing file**. Unzip this folder first, then drag EVERYTHING inside it (including the `netlify`, `css` and `setup` folders) into the page. Click **Commit changes**.
+## FIRST-TIME SETUP
+1. Supabase: New project. SQL Editor: edit `PUT-YOUR-EMAIL-HERE` in `setup/supabase.sql` to your admin email, paste everything, Run. Then Authentication > Users > Add user (same email, a password, tick Auto Confirm).
+2. Project Settings > API: copy the Project URL and the anon/publishable key into `config.js` (and your WhatsApp number).
+3. GitHub: new repository, upload all the files. Netlify: Add new site > Import from GitHub, leave all boxes empty, Deploy.
+4. Open your link + `/admin.html` and sign in.
 
-## 3. Netlify (puts it online)
-1. Sign up at netlify.com with your GitHub account.
-2. **Add new site** > **Import an existing project** > **GitHub** > choose `cudwears`.
-3. Leave every box empty (no build command, no publish folder). Click **Deploy**. In about a minute you get a link like `something.netlify.app`.
+## How things work
+- Customers choose ANY colours (full palette plus a custom colour picker); the photo previews the colour. The preview works best on plain-coloured items on a plain background and is a guide only.
+- Name plus one contact (phone/WhatsApp or email) is all that is required. Address is optional; customers can add it or share their GPS location. You see it (with a Google Maps link) in Admin > Orders.
+- Payment is never forced online. Customers pick OPay, PocketApp or bank transfer, pay the deposit, and send the receipt on WhatsApp. In Admin > Orders tap "Deposit received" or "Fully paid".
+- Set an expected delivery date and a note per order; customers see them under Track.
+- Orders are remembered in the customer's browser (Track tab) with a Copy tracking ID button.
 
-## Use it
-- Store: your Netlify link. Admin: your link + `/admin.html`. Log in with the email and password from step 1.4.
-- Add designs in Admin > Products. You never need GitHub again for products, photos or orders. Photos are resized (never cropped) and compressed automatically.
-- Orders, bookings, deliveries, returns, complaints and comments are all in Admin.
-- Sharing: the Share button on each design gives a link (`/p/...`). WhatsApp, Facebook and X show the photo, name and price.
+## The "Powered by Netlify" badge
+Netlify adds it, not this code. The site leaves a clear strip at the bottom so it never covers a button. If you remove the badge in Netlify, change `--badge:46px` to `--badge:0px` at the top of `css/app.css`.
 
 ## If something is wrong
-- Store is empty or errors: the two values in `config.js` are wrong, or you haven't added a product yet.
-- "Not set up as admin": the email in the SQL (step 1.2) differs from the user you created (step 1.4).
-- Photo upload fails: step 1.3 did not run fully. Run the SQL again.
-- After editing `config.js` later, upload the new file on GitHub (Add file > Upload files) and Netlify updates itself.
+- "Signed in, but the database refused": run `setup/supabase.sql` again. If it lists nothing as admin, the email in the SQL differs from your Supabase user.
+- Photo upload fails: run `setup/supabase.sql` again.
+- Store empty: add a product in Admin first.
