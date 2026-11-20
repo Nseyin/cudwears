@@ -1,0 +1,70 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="robots" content="noindex,nofollow">
+<title>CUDWEARS Admin</title><meta name="theme-color" content="#0F1E33">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&family=Newsreader:wght@400..600&display=swap"><link rel="stylesheet" href="css/app.css"></head><body>
+<div id="login" class="login box" hidden><div class="brand" style="margin-bottom:10px">CUD<b>WEARS</b> Admin</div><form id="lf"><input class="f" id="em" type="email" placeholder="Admin email" autocomplete="username"><input class="f" id="pw" type="password" placeholder="Password" autocomplete="current-password" style="margin-top:10px"><p class="err" id="le" hidden></p><button class="btn brass" style="margin-top:10px">Sign in</button></form></div>
+<div id="app" hidden><header class="top"><div class="brand">CUD<b>WEARS</b> <small style="font:600 .7rem Inter;letter-spacing:.1em">ADMIN</small></div><div class="row"><a class="chip" href="/" target="_blank">View store</a><button class="chip" id="out">Sign out</button></div></header>
+<div class="wrap"><div class="tabs" id="tabs"></div><div id="body"></div></div></div>
+<script src="config.js"></script><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<script>
+const sb=supabase.createClient(CFG.url,CFG.key),$=s=>document.querySelector(s),naira=n=>'₦'+Number(n).toLocaleString('en-NG');
+const ST=['pending','confirmed','in_production','shipped','delivered','failed','returned','cancelled'],LAB={pending:'Pending',confirmed:'Confirmed',in_production:'In production',shipped:'Shipped',delivered:'Delivered',failed:'Delivery failed',returned:'Returned',cancelled:'Cancelled'};
+const pic=p=>CFG.url+'/storage/v1/object/public/products/'+p;
+const E=(t,a={},k=[])=>{const n=document.createElement(t);for(const[x,v]of Object.entries(a)){if(x==='text')n.textContent=v;else if(x.startsWith('on'))n.addEventListener(x.slice(2),v);else if(v===true)n.setAttribute(x,'');else if(v!==false&&v!=null)n.setAttribute(x,v)}k.flat().forEach(c=>c!=null&&n.append(c));return n};
+let D,tab='home',of='all',ot='all',ff='all',editing=null;
+const show=(on)=>{$('#app').hidden=!on;$('#login').hidden=on};
+$('#out').onclick=async()=>{await sb.auth.signOut();show(false)};
+$('#lf').onsubmit=async e=>{e.preventDefault();const{error}=await sb.auth.signInWithPassword({email:$('#em').value.trim(),password:$('#pw').value});if(error){$('#le').textContent='Wrong email or password.';$('#le').hidden=false}else{$('#le').hidden=true;boot()}};
+async function load(){const q=(t,o)=>sb.from(t).select('*').order(o,{ascending:false}).limit(500);const[o,f,p]=await Promise.all([q('orders','created_at'),q('feedback','created_at'),q('products','created_at')]);
+ if(o.error||f.error||p.error)throw new Error('forbidden');D={orders:o.data,feedback:f.data,products:p.data}}
+async function boot(){const{data}=await sb.auth.getSession();if(!data.session)return show(false);try{await load();show(true);draw()}catch(e){await sb.auth.signOut();show(false);$('#le').textContent='This account is not set up as admin. Check the email in the setup step.';$('#le').hidden=false}}
+function draw(){const T=[['home','Overview'],['orders','Orders'],['products','Products'],['feedback','Feedback']];
+ $('#tabs').replaceChildren(...T.map(([k,l])=>E('button',{class:'chip'+(tab===k?' on':''),text:l,onclick:()=>{tab=k;editing=null;draw()}})));
+ $('#body').replaceChildren(tab==='home'?home():tab==='orders'?orders():tab==='products'?(editing?form():products()):feedback())}
+const cnt=(l,f)=>l.filter(f).length,when=d=>new Date(d).toLocaleString();
+async function reload(){await load();draw()}
+function home(){const o=D.orders.filter(x=>x.type==='order'),rev=o.filter(x=>x.status==='delivered').reduce((s,x)=>s+x.total,0);
+ const S=(n,l,fn)=>E('button',{class:'stat',onclick:fn},[E('b',{text:n}),E('span',{text:l})]),go=s=>()=>{tab='orders';of=s;ot='all';draw()};
+ return E('div',{},[E('div',{class:'stats'},[S(cnt(o,x=>x.status==='pending'),'Pending orders',go('pending')),S(cnt(D.orders,x=>x.type==='booking'&&x.status==='pending'),'Pending bookings',()=>{tab='orders';ot='booking';of='pending';draw()}),
+  S(cnt(o,x=>x.status==='delivered'),'Delivered',go('delivered')),S(cnt(o,x=>x.status==='failed'),'Failed deliveries',go('failed')),S(cnt(o,x=>x.status==='returned'),'Returns',go('returned')),
+  S(cnt(D.feedback,x=>x.kind==='complaint'&&x.status!=='resolved'),'Open complaints',()=>{tab='feedback';ff='complaint';draw()}),S(cnt(D.feedback,x=>x.kind==='comment'),'Comments',()=>{tab='feedback';ff='comment';draw()}),S(naira(rev),'Delivered revenue',go('delivered'))]),
+  E('p',{class:'note',style:'margin-top:12px',text:D.products.length+' products · '+o.length+' orders · '+cnt(D.orders,x=>x.type==='booking')+' bookings in total'})])}
+function orders(){const L=D.orders.filter(x=>(of==='all'||x.status===of)&&(ot==='all'||x.type===ot)),ch=(v,l,cur,set)=>E('button',{class:'chip'+(cur===v?' on':''),text:l,onclick:()=>{set(v);draw()}});
+ return E('div',{},[E('div',{class:'chips'},[['all','All'],['order','Orders'],['booking','Bookings']].map(([v,l])=>ch(v,l,ot,x=>ot=x))),E('div',{class:'chips'},[['all','All statuses'],...ST.map(s=>[s,LAB[s]])].map(([v,l])=>ch(v,l,of,x=>of=x))),
+  ...(L.length?L.map(o=>E('div',{class:'box'},[E('div',{class:'li'},[E('div',{},[E('b',{text:o.code+' · '+(o.type==='booking'?'Booking':'Order')}),E('div',{class:'note',text:when(o.created_at)})]),
+   E('select',{class:'f',style:'width:auto;min-height:40px',onchange:async e=>{const{error}=await sb.from('orders').update({status:e.target.value,updated_at:new Date().toISOString()}).eq('code',o.code);if(error)alert('Could not update');else o.status=e.target.value;draw()}},ST.map(s=>E('option',{value:s,text:LAB[s],selected:s===o.status})))]),
+   E('p',{style:'margin:8px 0 4px'},[o.name+' · ',E('a',{href:'tel:+'+o.phone,text:o.phone}),' · ',E('a',{href:'https://wa.me/'+o.phone,target:'_blank',rel:'noopener',text:'WhatsApp'})]),o.address?E('p',{class:'note',text:o.address}):null,
+   ...(o.items||[]).map(i=>E('p',{style:'margin:4px 0'},[E('b',{text:i.qty+' × '+i.name}),' '+[i.colour,i.size].filter(Boolean).join(' · '),i.mods&&i.mods.length?' · Mods: '+i.mods.join(', '):'',i.note?' · "'+i.note+'"':''])),
+   o.note?E('p',{class:'note',text:o.note,style:'white-space:pre-wrap'}):null,o.total?E('div',{class:'price',text:naira(o.total)}):null])):[E('div',{class:'empty',text:'No orders here yet.'})])])}
+function feedback(){const L=D.feedback.filter(x=>ff==='all'||x.kind===ff);
+ return E('div',{},[E('div',{class:'chips'},[['all','All'],['complaint','Complaints'],['return','Returns'],['comment','Comments']].map(([v,l])=>E('button',{class:'chip'+(ff===v?' on':''),text:l,onclick:()=>{ff=v;draw()}}))),
+  ...(L.length?L.map(f=>E('div',{class:'box'},[E('div',{class:'li'},[E('b',{text:f.kind.toUpperCase()+(f.code?' · '+f.code:'')}),E('select',{class:'f',style:'width:auto;min-height:40px',onchange:async e=>{await sb.from('feedback').update({status:e.target.value}).eq('id',f.id);f.status=e.target.value;draw()}},['open','in_review','resolved'].map(s=>E('option',{value:s,text:s.replace('_',' '),selected:s===f.status})))]),
+   E('p',{style:'white-space:pre-wrap',text:f.text}),E('p',{class:'note'},[f.name+' · ',f.phone?E('a',{href:'https://wa.me/'+f.phone,target:'_blank',rel:'noopener',text:f.phone}):'',' · '+when(f.created_at)])])):[E('div',{class:'empty',text:'Nothing here yet.'})])])}
+function products(){return E('div',{},[E('button',{class:'btn brass',text:'+ New product',onclick:()=>{editing={imgs:[],fresh:[],cat:'clothing',active:true};draw()}}),
+ E('div',{style:'margin-top:12px'},D.products.length?D.products.map(p=>E('div',{class:'box li'},[E('div',{class:'li',style:'gap:12px;justify-content:flex-start'},[p.imgs[0]?E('img',{src:pic(p.imgs[0]),alt:''}):null,E('div',{},[E('b',{text:p.name}),E('div',{class:'note',text:p.cat+(p.sub?' · '+p.sub:'')+' · '+naira(p.price)+(p.active?'':' · hidden')})])]),
+  E('div',{class:'row'},[E('button',{class:'chip',text:'Edit',onclick:()=>{editing={...p,fresh:[],imgs:[...p.imgs]};draw()}}),E('button',{class:'chip',text:p.active?'Hide':'Show',onclick:async()=>{await sb.from('products').update({active:!p.active}).eq('id',p.id);await reload()}}),
+  E('button',{class:'chip',text:'Delete',onclick:async()=>{if(!confirm('Delete '+p.name+' and its photos?'))return;if(p.imgs.length)await sb.storage.from('products').remove(p.imgs);await sb.from('products').delete().eq('id',p.id);await reload()}})])])):[E('div',{class:'empty',text:'No products yet. Add your first design.'})])])}
+// Resize the whole picture to fit (never crop), then lower quality until it is about 55 KB.
+async function squeeze(file){const bmp=await createImageBitmap(file);let sc=Math.min(1,1200/Math.max(bmp.width,bmp.height)),q=.82,blob,type='image/webp';
+ const enc=t=>new Promise(r=>{const c=document.createElement('canvas');c.width=Math.max(1,Math.round(bmp.width*sc));c.height=Math.max(1,Math.round(bmp.height*sc));c.getContext('2d').drawImage(bmp,0,0,c.width,c.height);c.toBlob(r,t,q)});
+ for(let i=0;i<14;i++){blob=await enc(type);if(blob&&blob.type!==type&&type==='image/webp'){type='image/jpeg';blob=await enc(type)}if(blob.size<=55000)break;if(q>.5)q-=.1;else sc*=.85}
+ return{blob,kb:Math.round(blob.size/1024),url:URL.createObjectURL(blob)}}
+function form(){const p=editing,I=(id,ph,v,t)=>E('input',{class:'f',id,placeholder:ph,value:v??'',type:t||'text'}),pick=E('input',{type:'file',accept:'image/*',multiple:true,hidden:true}),st=E('p',{class:'note'}),gal=E('div',{class:'imgs'}),csv=a=>(a||[]).join(', ');
+ const drawG=()=>gal.replaceChildren(...p.imgs.map(id=>E('figure',{},[E('img',{src:pic(id),alt:''}),E('button',{type:'button','aria-label':'Remove',text:'×',onclick:()=>{p.imgs=p.imgs.filter(x=>x!==id);drawG()}})])),...p.fresh.map((f,i)=>E('figure',{},[E('img',{src:f.url,alt:''}),E('span',{text:f.kb+' KB'}),E('button',{type:'button','aria-label':'Remove',text:'×',onclick:()=>{p.fresh.splice(i,1);drawG()}})])));
+ pick.onchange=async()=>{for(const f of pick.files){if(p.imgs.length+p.fresh.length>=8){st.textContent='Maximum 8 photos.';break}st.textContent='Compressing '+f.name+'…';try{p.fresh.push(await squeeze(f))}catch(e){st.textContent='Could not read '+f.name}}st.textContent='Photos are resized (never cropped) and compressed automatically.';pick.value='';drawG()};drawG();
+ const cat=E('select',{class:'f',id:'fc'},[['clothing','Clothing'],['footwear','Footwear (shoes, sandals, flip-flops…)']].map(([v,l])=>E('option',{value:v,text:l,selected:p.cat===v})));
+ const L=(t,n)=>[E('div',{class:'lbl',text:t}),n],err=E('p',{class:'err',hidden:true});
+ return E('div',{class:'box'},[E('h2',{text:p.id?'Edit product':'New product'}),...L('Photos',E('div',{},[gal,E('button',{type:'button',class:'btn ghost',style:'margin-top:8px',text:'+ Add photos',onclick:()=>pick.click()}),pick,st])),
+  ...L('Name',I('fn','e.g. Ankara Wrap Dress',p.name)),E('div',{class:'two'},[E('div',{},L('Category',cat)),E('div',{},L('Type (shown as a filter)',I('fs','e.g. Dresses, Senator, Sandals',p.sub)))]),
+  ...L('Price (₦)',I('fp','15000',p.price,'number')),...L('Description',E('textarea',{class:'f',id:'fd',text:p.descr||''})),
+  ...L('Colours customers can pick (comma separated)',I('fcol','Black, Wine, Royal blue',csv(p.colours))),...L('Sizes (comma separated)',I('fsz','S, M, L, XL  or  40, 41, 42',csv(p.sizes))),
+  ...L('Modification options (comma separated)',I('fm','Shorter length, Add pockets, Long sleeves',csv(p.mods))),
+  E('label',{style:'display:flex;gap:8px;align-items:center;margin-top:12px'},[E('input',{type:'checkbox',id:'fa',checked:p.active!==false}),'Visible in the store']),err,
+  E('div',{class:'row',style:'margin-top:12px'},[E('button',{class:'btn brass',text:'Save product',onclick:async e=>{const sp=s=>$(s).value.split(',').map(x=>x.trim()).filter(Boolean),bad=m=>{err.textContent=m;err.hidden=false;e.target.disabled=false};
+   err.hidden=true;e.target.disabled=true;if(!$('#fn').value.trim())return bad('Enter a name.');if($('#fp').value===''||+$('#fp').value<0)return bad('Enter a price.');
+   const paths=[];try{for(const f of p.fresh){const path=crypto.randomUUID()+(f.blob.type==='image/webp'?'.webp':'.jpg');const{error}=await sb.storage.from('products').upload(path,f.blob,{contentType:f.blob.type,cacheControl:'31536000'});if(error)throw error;paths.push(path)}}catch(x){return bad('Photo upload failed. Check the Supabase setup step.')}
+   const row={name:$('#fn').value.trim(),cat:$('#fc').value,sub:$('#fs').value.trim(),price:Math.round(+$('#fp').value),descr:$('#fd').value.trim(),colours:sp('#fcol'),sizes:sp('#fsz'),mods:sp('#fm'),active:$('#fa').checked,imgs:[...p.imgs,...paths]};
+   const r=p.id?await sb.from('products').update(row).eq('id',p.id):await sb.from('products').insert(row);if(r.error)return bad('Could not save: '+r.error.message);
+   if(p.id){const old=(D.products.find(x=>x.id===p.id)||{imgs:[]}).imgs.filter(x=>!row.imgs.includes(x));if(old.length)await sb.storage.from('products').remove(old)}
+   editing=null;await reload()}}),E('button',{class:'btn ghost',text:'Cancel',onclick:()=>{editing=null;draw()}})])])}
+boot();
+</script></body></html>
