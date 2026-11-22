@@ -175,14 +175,42 @@
   function renderHome() {
     var hc = $('#homeCats');
     if (hc) {
-      var items = Object.keys(CATS).map(function (k) {
-        return E('div', { class: 'grid-item cw-cat', 'data-filter': k, role: 'button', tabindex: '0' }, [E('span', { class: 'cw-cat-ico' }, [ico((CAT_ICO[k] || 'bi-bag').slice(3))]), E('span', { class: 'text', text: CATS[k] })]);
-      });
-      items.push(E('div', { class: 'grid-item cw-cat', 'data-filter': 'saved', role: 'button', tabindex: '0' }, [E('span', { class: 'cw-cat-ico' }, [ico('heart')]), E('span', { class: 'text', text: 'Saved' })]));
-      hc.replaceChildren.apply(hc, items);
+      var chipsH = [E('button', { type: 'button', class: 'chip active', 'data-filter': '', role: 'listitem' }, [ico('grid'), ' All'])];
+      Object.keys(CATS).forEach(function (k) { chipsH.push(E('button', { type: 'button', class: 'chip', 'data-filter': k, role: 'listitem' }, [ico((CAT_ICO[k] || 'bi-bag').slice(3)), ' ' + CATS[k]])); });
+      chipsH.push(E('button', { type: 'button', class: 'chip', 'data-filter': 'saved', role: 'listitem' }, [ico('heart'), ' Saved']));
+      hc.replaceChildren.apply(hc, chipsH);
     }
     var rec = P.filter(function (p) { return p.featured; }), R = (rec.length ? rec : P).slice(0, 8), hf = $('#homeFeatured');
     if (hf) hf.replaceChildren.apply(hf, R.length ? R.map(railCard) : [E('p', { class: 'note-empty', text: 'New designs are landing soon.' })]);
+    initRail();
+  }
+  /* sliding rail: arrows, edge fades, progress bar, and a one-time nudge so people see it moves */
+  var railInit = false;
+  function initRail() {
+    var rail = $('#homeFeatured'), wrap = $('#railWrap'), bar = $('#railBar'); if (!rail || !wrap) return;
+    var prev = wrap.querySelector('.prev'), next = wrap.querySelector('.next'), hint = document.querySelector('.cw-swipehint');
+    function upd() {
+      var max = rail.scrollWidth - rail.clientWidth, can = max > 6, x = rail.scrollLeft;
+      prev.hidden = !can || x < 6; next.hidden = !can || x > max - 6;
+      wrap.classList.toggle('more-l', can && x > 6); wrap.classList.toggle('more-r', can && x < max - 6);
+      if (hint) hint.hidden = !can;
+      bar.hidden = !can; if (can) bar.firstChild.style.cssText = 'width:' + Math.max(18, rail.clientWidth / rail.scrollWidth * 100) + '%;margin-left:' + (x / max) * (100 - Math.max(18, rail.clientWidth / rail.scrollWidth * 100)) + '%';
+    }
+    if (!railInit) {
+      railInit = true;
+      rail.addEventListener('scroll', upd, { passive: true }); window.addEventListener('resize', upd);
+      prev.addEventListener('click', function () { rail.scrollBy({ left: -rail.clientWidth * 0.8, behavior: 'smooth' }); });
+      next.addEventListener('click', function () { rail.scrollBy({ left: rail.clientWidth * 0.8, behavior: 'smooth' }); });
+      if ('IntersectionObserver' in window) {
+        var seen = false;
+        new IntersectionObserver(function (en) {
+          if (seen || !en[0].isIntersecting) return; seen = true;
+          if (rail.scrollWidth - rail.clientWidth < 20) return;
+          setTimeout(function () { rail.scrollTo({ left: 70, behavior: 'smooth' }); setTimeout(function () { rail.scrollTo({ left: 0, behavior: 'smooth' }); }, 650); }, 500);
+        }, { threshold: 0.6 }).observe(wrap);
+      }
+    }
+    upd(); setTimeout(upd, 400);
   }
   function renderLists() {
     var map = { listFeat: function () { var r = P.filter(function (p) { return p.featured; }); return r.length ? r : P.slice(0, 12); }, listNew: function () { return P.slice(0, 24); }, listSaved: function () { return P.filter(function (p) { return wish.indexOf(p.id) > -1; }); } };
@@ -459,6 +487,26 @@
   });
   document.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role="button"][data-filter]')) { e.preventDefault(); e.target.click(); } });
   window.addEventListener('hashchange', function () { var m = location.hash.match(/^#p=([\w-]+)/); if (m && window.CWX._loaded) window.CWX.openProduct(m[1]); });
+
+  /* hide the "Powered by Netlify" badge (injected on free plans): CSS in wears.css plus a sweep for anything fixed-position that mentions Netlify */
+  (function () {
+    var mine = /^(app-container|readingProgressBar|toastNotification|modal|imageLightbox|productModal|cartModal|orderModal|backToTopBtn)$/;
+    function kill(el) { try { el.style.setProperty('display', 'none', 'important'); el.setAttribute('aria-hidden', 'true'); if (el.parentNode && /netlify/i.test(el.id + el.className + (el.tagName || ''))) el.remove(); } catch (e) {} }
+    function sweep() {
+      [document.body, document.documentElement].forEach(function (root) {
+        Array.prototype.forEach.call(root.children, function (el) {
+          if (/^(SCRIPT|STYLE|LINK|META|HEAD|BODY|NOSCRIPT)$/.test(el.tagName) || mine.test(el.id) || /(^|\s)(app-container|toast-notification|pm-overlay|modal-overlay|lightbox-overlay|modal|back-to-top|dropdown-menu)(\s|$)/.test(el.className || '')) return;
+          var txt = (el.textContent || '') + ' ' + (el.id || '') + ' ' + (el.className && el.className.baseVal === undefined ? el.className : '');
+          var host = el.shadowRoot ? el.shadowRoot.textContent : '';
+          if (/netlify/i.test(txt + host) || (el.tagName === 'IFRAME' && /netlify/i.test(el.src || ''))) kill(el);
+        });
+      });
+    }
+    sweep();
+    if (window.MutationObserver) new MutationObserver(sweep).observe(document.documentElement, { childList: true, subtree: false });
+    if (window.MutationObserver) new MutationObserver(sweep).observe(document.body, { childList: true, subtree: false });
+    var n = 0, t = setInterval(function () { sweep(); if (++n > 20) clearInterval(t); }, 1000);
+  })();
 
   /* quick CUDWEARS-style install of the manifest fallback + service worker (cache-bust friendly) */
   if ('serviceWorker' in navigator && location.protocol === 'https:') { navigator.serviceWorker.register('js/sw.js').catch(function () {}); }

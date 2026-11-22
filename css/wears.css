@@ -97,3 +97,29 @@ html[data-theme="dark"] .cw-opt.on { background: linear-gradient(180deg, #FFE760
 
 .pm-dialog .text-center h2 { padding-right: 0; }
 .cw-picker { border-radius: 12px; overflow: hidden; cursor: pointer; }
+
+/* ---- home: one-line category strip ---- */
+.cw-catline { margin: .2rem 0 .8rem; padding: .1rem .15rem .3rem; flex-wrap: nowrap; }
+.cw-catline .chip { min-height: 40px; }
+.cw-catline .chip i { font-size: 1rem; }
+
+/* ---- home: sliding rail (arrows, edge fade, hint, progress) ---- */
+.cw-swipehint { display: flex; align-items: center; gap: .4rem; margin: -.3rem 0 .5rem; font-size: .8rem; font-weight: 700; color: var(--g-accent, #B8945B); }
+.cw-swipehint[hidden], .cw-rbar[hidden], .cw-rarrow[hidden] { display: none !important; }
+.cw-railwrap { position: relative; }
+.cw-railwrap .cw-rail { scroll-snap-type: x mandatory; scrollbar-width: none; padding: 0 .1rem .4rem; scroll-padding-left: .1rem; }
+.cw-railwrap .cw-rail::-webkit-scrollbar { display: none; }
+.cw-railwrap::before, .cw-railwrap::after { content: ""; position: absolute; top: 0; bottom: .4rem; width: 38px; pointer-events: none; opacity: 0; transition: opacity .2s; z-index: 2; }
+.cw-railwrap::before { left: 0; background: linear-gradient(90deg, var(--rail-bg, #FBF8F2), transparent); }
+.cw-railwrap::after { right: 0; background: linear-gradient(270deg, var(--rail-bg, #FBF8F2), transparent); }
+.cw-railwrap.more-l::before, .cw-railwrap.more-r::after { opacity: 1; }
+html[data-theme="dark"] .cw-railwrap { --rail-bg: #172d49; }
+.cw-rarrow { position: absolute; top: 40%; transform: translateY(-50%); z-index: 3; width: 40px; height: 40px; border-radius: 50%; border: 1px solid rgba(255,255,255,.4); background: rgba(15,30,51,.85); color: #F4F0E8; display: flex; align-items: center; justify-content: center; box-shadow: 0 6px 14px -6px rgba(0,0,0,.6); cursor: pointer; }
+.cw-rarrow.prev { left: -4px; } .cw-rarrow.next { right: -4px; animation: cwNudge 1.6s ease-in-out infinite; }
+@keyframes cwNudge { 0%, 100% { transform: translate(0, -50%); } 50% { transform: translate(5px, -50%); } }
+.cw-rbar { height: 4px; border-radius: 4px; background: rgba(127,127,127,.25); margin-top: .35rem; overflow: hidden; }
+.cw-rbar i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, #D2B27A, #B8945B); transition: margin-left .1s linear; }
+@media (prefers-reduced-motion: reduce) { .cw-rarrow.next { animation: none; } }
+
+/* ---- hide Netlify's free-plan "Powered by Netlify" badge ---- */
+#netlify-badge, #netlify-banner, netlify-badge, [id*="netlify" i], [class*="netlify" i], iframe[src*="netlify" i], body > a[href*="netlify.com"], html > a[href*="netlify.com"] { display: none !important; visibility: hidden !important; opacity: 0 !important; pointer-events: none !important; width: 0 !important; height: 0 !important; }
