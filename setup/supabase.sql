@@ -1,4 +1,4 @@
--- CUDWEARS database. Paste ALL of this into Supabase > SQL Editor > Run.
+-- CUDWEARS database (shop + marketplace: designers, services, rentals). Paste ALL of this into Supabase > SQL Editor > Run.
 -- Safe to run again at any time (new project OR to update an existing one).
 -- NEW PROJECT ONLY: change PUT-YOUR-EMAIL-HERE below to your admin login email. If you already ran this before, leave it.
 create table if not exists admins(email text primary key);
@@ -16,6 +16,7 @@ create table if not exists products(
 alter table products add column if not exists kind text default '';
 alter table products add column if not exists lead text default '';
 alter table products add column if not exists featured boolean default false;
+alter table products add column if not exists seller text default '';
 alter table products drop constraint if exists products_cat_check;
 alter table products add constraint products_cat_check check (cat in ('clothing','footwear','accessories'));
 
@@ -84,11 +85,11 @@ begin
   if p_type='order' then
     if jsonb_typeof(p_items)<>'array' or jsonb_array_length(p_items)=0 or jsonb_array_length(p_items)>10 then raise exception 'Choose an item.'; end if;
     for it in select value from jsonb_array_elements(p_items) loop
-      select id,name,price into pr from products where id=(it->>'pid')::uuid and active;
+      select id,name,price,seller into pr from products where id=(it->>'pid')::uuid and active;
       if not found then raise exception 'An item is no longer available.'; end if;
       q:=least(20,greatest(1,coalesce((it->>'qty')::int,1)));
       v_total:=v_total+pr.price*q;
-      v_items:=v_items||jsonb_build_array(jsonb_build_object('pid',pr.id,'name',pr.name,'price',pr.price,'qty',q,
+      v_items:=v_items||jsonb_build_array(jsonb_build_object('pid',pr.id,'name',pr.name,'seller',coalesce(pr.seller,''),'price',pr.price,'qty',q,
         'colours',case when jsonb_typeof(it->'colours')='array' then (it->'colours') else '[]'::jsonb end,
         'size',left(coalesce(it->>'size',''),20),
         'mods',case when jsonb_typeof(it->'mods')='array' then (it->'mods') else '[]'::jsonb end,
@@ -130,3 +131,48 @@ grant select, update, delete on feedback to authenticated;
 grant execute on function is_admin() to anon, authenticated;
 grant execute on function place_order(text,text,text,text,text,double precision,double precision,text,text,jsonb) to anon, authenticated;
 grant execute on function track_order(text,text) to anon, authenticated;
+
+-- ===================== MARKETPLACE (designers, services, rentals) =====================
+
+create table if not exists listings(
+  id uuid primary key default gen_random_uuid(),
+  kind text not null check (kind in ('store','service','rental')),
+  grp text default '', type text default '', name text not null, descr text default '',
+  state text default '', city text default '', price int default 0, unit text default '', extra text default '',
+  phone text default '', rating numeric(2,1) default 0, reviews int default 0,
+  verified boolean default false, remote boolean default false, nationwide boolean default false, available boolean default true,
+  status text default 'pending' check (status in ('pending','approved','rejected')),
+  sample boolean default false, created_at timestamptz default now());
+alter table listings enable row level security;
+
+drop policy if exists "shop reads approved listings" on listings;
+create policy "shop reads approved listings" on listings for select to anon, authenticated using (status='approved' or is_admin());
+drop policy if exists "anyone lists a business" on listings;
+create policy "anyone lists a business" on listings for insert to anon, authenticated
+  with check (status='pending' and verified=false and sample=false and length(trim(name)) between 2 and 80 and length(trim(coalesce(descr,''))) between 10 and 400 and length(regexp_replace(coalesce(phone,''),'\D','','g')) between 10 and 15);
+drop policy if exists "admin manages listings" on listings;
+create policy "admin manages listings" on listings for all to authenticated using (is_admin()) with check (is_admin());
+grant select, insert on listings to anon, authenticated;
+grant update, delete on listings to authenticated;
+
+-- SAMPLE listings so the Services, Rentals and Designers pages are not empty on day one.
+-- Replace them: Admin > Listings > delete the ones marked Sample, then approve real sign-ups.
+insert into listings(kind,grp,type,name,descr,state,city,price,unit,rating,reviews,verified,remote,nationwide,available,status,sample)
+select * from (values
+ ('store','Clothing','Designer','Adire & Ankara Studio','Ready-to-wear and made-to-order Ankara, adire and lace outfits.','Lagos','Surulere',0,'',4.9,61,true,false,true,true,'approved',true),
+ ('store','Footwear','Shoemaker','Ibadan Soles','Handmade leather sandals, loafers and slides in your size.','Oyo','Ibadan',0,'',4.7,34,true,false,true,true,'approved',true),
+ ('store','Bags & Home','Home & bags','Kano Weave House','Woven bags, cushion covers and table linen.','Kano','Kano',0,'',4.6,22,false,false,true,true,'approved',true),
+ ('service','fashion','Tailor','Stitch & Style Atelier','Native wear, corporate suits and aso-ebi sewing with fast turnaround.','Imo','Owerri',12000,'per job',4.8,49,true,false,true,true,'approved',true),
+ ('service','fashion','Fashion Designer','Lola Couture Lagos','Custom gowns and two-piece sets. Fittings by appointment.','Lagos','Lekki',45000,'per job',4.9,77,true,false,true,true,'approved',true),
+ ('service','fitting','Fitting Session','Fit & Finish Studio','In-person measurements and fitting for any outfit you already own or ordered.','Lagos','Yaba',5000,'per session',4.7,40,true,false,false,true,'approved',true),
+ ('service','alter','Alterations','Quick Fix Alterations','Hemming, taking in, letting out and zip replacement, same-day on request.','FCT Abuja','Wuse 2',3000,'per job',4.6,58,false,false,false,true,'approved',true),
+ ('service','craft','Embroidery & Beadwork','Bead & Thread Co.','Hand embroidery, monograms and beadwork for gowns and caps.','Anambra','Onitsha',8000,'per job',4.8,29,true,false,true,true,'approved',true),
+ ('service','care','Laundry & Dry Cleaning','Crisp Care Laundry','Pickup and delivery dry-cleaning for suits, gowns and traditional wear.','Lagos','Ikeja',2500,'per job',4.5,83,true,false,false,true,'approved',true),
+ ('rental','wear','Gowns & Evening Dresses','Glam Gown Hire','Evening gowns and prom dresses by the day, cleaned and ready to wear.','Lagos','Victoria Island',25000,'per day',4.8,52,true,false,false,true,'approved',true),
+ ('rental','wear','Suits & Tuxedos','Sharp Suits Rentals','Tuxedos, three-piece suits and accessories for weddings and events.','FCT Abuja','Garki',20000,'per day',4.7,44,true,false,false,true,'approved',true),
+ ('rental','wear','Aso-ebi & Traditional Attire','Heritage Attire Hire','Complete agbada, buba and iro and gele, and Igbo and Northern traditional sets.','Oyo','Ibadan',18000,'per event',4.7,31,true,false,true,true,'approved',true),
+ ('rental','bridal','Bridal Gowns & Veils','Forever Bridal Rentals','Wedding gowns, veils and tiaras with fitting included.','Lagos','Lekki',80000,'per event',4.9,26,true,false,true,true,'approved',true),
+ ('rental','acc','Jewellery & Accessories','Sparkle Box Hire','Statement necklaces, gele and fascinators for the day.','Rivers','Port Harcourt',6000,'per day',4.5,18,false,false,false,true,'approved',true),
+ ('rental','acc','Shoes & Bags','Heels on Hire','Occasion heels and clutch bags in most sizes.','Enugu','Independence Layout',5000,'per day',4.4,15,false,false,false,true,'approved',true)
+) as v(kind,grp,type,name,descr,state,city,price,unit,rating,reviews,verified,remote,nationwide,available,status,sample)
+where not exists (select 1 from listings where sample);

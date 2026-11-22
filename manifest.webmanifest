@@ -1,1 +1,13 @@
-{"name":"CUDWEARS","short_name":"CUDWEARS","start_url":"/","display":"standalone","background_color":"#ffffff","theme_color":"#465F9F"}
+{
+  "name": "CUDWEARS | Clothing, Footwear & Home",
+  "short_name": "CUDWEARS",
+  "description": "Made-to-order clothing, footwear, bags and home pieces. Pick your colours, add your modifications, hire a tailor or rent an outfit.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#0F1E33",
+  "theme_color": "#0F1E33",
+  "icons": [
+    { "src": "img/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "img/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}

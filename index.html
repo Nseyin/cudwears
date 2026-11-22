@@ -1,162 +1,648 @@
-<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>CUDWEARS | Clothing, Footwear &amp; Home</title>
-<meta name="description" content="CUDWEARS: clothing designs, footwear, bags and home items. Pick your colours, add your modifications and order in a tap.">
-<meta property="og:title" content="CUDWEARS | Clothing, Footwear &amp; Home"><meta property="og:description" content="Pick your colours, add your modifications and order in a tap.">
-<meta name="theme-color" content="#465F9F"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><link rel="manifest" href="manifest.webmanifest">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Krona+One&family=Outfit:wght@300;400;500;600;700&display=swap">
-<link rel="stylesheet" href="css/app.css"></head><body>
-<header class="hdr"><div class="hdr-top"><div class="brand">CUD<b>WEARS</b></div><button class="avatar-btn" id="meBtn" aria-label="My orders"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c1-4.5 4-6 8-6s7 1.5 8 6"/></svg></button></div>
- <div class="hdr-row"><button class="gbtn" id="browseBtn" aria-label="Browse categories"><i></i><i></i><i></i><i></i></button><div class="hsearch"><input id="q" type="search" placeholder="Search your need here…" aria-label="Search" autocomplete="off"></div></div></header>
-<main>
- <section class="view on" id="v-shop"><div class="chips" id="cats"></div><div class="chips" id="subs" style="padding-top:0"></div><div id="home"></div></section>
- <section class="view" id="v-track"><h2 class="stitle">Track order</h2><p class="ssub">Your orders on this phone appear here automatically.</p>
-  <div id="mine"></div>
-  <form class="box" id="trackForm"><b>Look up an order</b><p class="note" style="margin:4px 0 10px">Order code plus the phone number or email you ordered with.</p><div class="two"><input class="f" id="tCode" placeholder="Order code e.g. CW-1A2B3C" autocapitalize="characters"><input class="f" id="tPhone" placeholder="Phone number or email"></div><p class="err" id="tErr" hidden></p><button class="btn brass" style="margin-top:10px">Track</button></form></section>
- <section class="view" id="v-help"><h2 class="stitle">Help</h2><p class="ssub">Book a custom design or fitting, request a return, report a problem, or leave a comment.</p>
-  <form class="box" id="helpForm"><div class="lbl">What do you need?</div>
-   <select class="f" id="hKind"><option value="booking">Book a custom design / fitting</option><option value="return">Return request</option><option value="complaint">Complaint</option><option value="comment">Comment / feedback</option></select>
-   <div class="two" style="margin-top:10px"><input class="f" id="hName" placeholder="Your name" autocomplete="name"><input class="f" id="hPhone" type="tel" placeholder="Phone / WhatsApp" autocomplete="tel"></div>
-   <input class="f" id="hEmail" type="email" placeholder="Email (optional)" style="margin-top:10px" autocomplete="email">
-   <input class="f" id="hCode" placeholder="Order code (for returns and complaints)" style="margin-top:10px" autocapitalize="characters">
-   <input class="f" id="hDate" type="date" style="margin-top:10px" aria-label="Preferred date">
-   <textarea class="f" id="hText" placeholder="Tell us more" style="margin-top:10px"></textarea>
-   <p class="err" id="hErr" hidden></p><p class="note" id="hOk" hidden></p><button class="btn brass" style="margin-top:10px">Send</button></form></section>
+<!DOCTYPE html>
+
+<html lang="en" data-theme="light">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>CUDWEARS | Clothing, Footwear &amp; Home, Made Your Way</title>
+    <meta name="description" content="CUDWEARS: made-to-order clothing, footwear, bags and home pieces from designers across Nigeria. Pick your colours, add your modifications, hire a tailor or rent an outfit." />
+    <meta property="og:title" content="CUDWEARS | Clothing, Footwear &amp; Home" />
+    <meta property="og:description" content="Pick your colours, add your modifications and order in a tap." />
+
+<!-- External Stylesheets -->
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" />
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" />
+
+<!-- Local Stylesheet -->
+
+<link rel="stylesheet" type="text/css" href="css/styles.css" />
+<link rel="stylesheet" type="text/css" href="css/midnight.css" />
+<link rel="stylesheet" type="text/css" href="css/refine.css" />
+<link rel="stylesheet" type="text/css" href="css/wears.css" />
+
+<!-- Google Fonts -->
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&display=swap" />
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400..600;1,6..72,400..600&display=swap" />
+<link rel="manifest" href="manifest.webmanifest" />
+<link rel="icon" type="image/png" href="img/icon-192.png" />
+<link rel="apple-touch-icon" href="img/apple-touch-icon.png" />
+<meta name="theme-color" content="#0F1E33" />
+<meta name="mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+  </head>
+
+
+  <body>
+  <div id="readingProgressBar"></div>
+
+  <div id="toastNotification" class="toast-notification" role="alert" aria-live="polite">
+    <span id="toastMessage"></span>
+  </div>
+
+
+<div class="app-container text-capitalize sidebar-hidden">
+
+
+  <!-- ===== SIDEBAR LEFT ===== -->
+
+  <div class="sidebar-left">
+    <div class="sidebar-header custom-sidebar-gradient">CUDWEARS</div>
+
+
+<div class="sidebar-tab-filter">
+  <input type="text" id="sidebarTabSearch" placeholder="Find" aria-label="Filter pages" autocomplete="off" />
+</div>
+
+<div class="sidebar-tabs" role="navigation" aria-label="More pages">
+    <section class="nav-group is-open" data-group="discover">
+      <button type="button" class="nav-group-head" aria-expanded="true" aria-controls="ng-discover"><span class="ng-label">Discover</span><i class="bi bi-chevron-down ng-chev" aria-hidden="true"></i></button>
+      <div class="nav-group-body" id="ng-discover" role="group" aria-label="Discover">
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab2')" data-tab-name="categories"><i class="bi bi-grid-fill" aria-hidden="true"></i><span class="tb-label">Categories</span></button>
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab4')" data-tab-name="new in"><i class="bi bi-stars" aria-hidden="true"></i><span class="tb-label">New In &amp; Saved</span></button>
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab5')" data-tab-name="designers"><i class="bi bi-patch-check-fill" aria-hidden="true"></i><span class="tb-label">Designers</span></button>
+      </div>
+    </section>
+    <section class="nav-group" data-group="orders">
+      <button type="button" class="nav-group-head" aria-expanded="false" aria-controls="ng-orders"><span class="ng-label">My Orders</span><i class="bi bi-chevron-down ng-chev" aria-hidden="true"></i></button>
+      <div class="nav-group-body" id="ng-orders" role="group" aria-label="My Orders">
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab6')" data-tab-name="track order"><i class="bi bi-geo-alt-fill" aria-hidden="true"></i><span class="tb-label">Track Order</span></button>
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab7')" data-tab-name="size guide"><i class="bi bi-rulers" aria-hidden="true"></i><span class="tb-label">Size Guide</span></button>
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab10')" data-tab-name="help"><i class="bi bi-chat-heart-fill" aria-hidden="true"></i><span class="tb-label">Custom &amp; Help</span></button>
+      </div>
+    </section>
+    <section class="nav-group" data-group="sell">
+      <button type="button" class="nav-group-head" aria-expanded="false" aria-controls="ng-sell"><span class="ng-label">Sell &amp; Hire</span><i class="bi bi-chevron-down ng-chev" aria-hidden="true"></i></button>
+      <div class="nav-group-body" id="ng-sell" role="group" aria-label="Sell &amp; Hire">
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab11')" data-tab-name="sell with us"><i class="bi bi-shop-window" aria-hidden="true"></i><span class="tb-label">Sell With Us</span></button>
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab15')" data-tab-name="list your business"><i class="bi bi-plus-circle-fill" aria-hidden="true"></i><span class="tb-label">List Your Business</span></button>
+      </div>
+    </section>
+    <section class="nav-group" data-group="help">
+      <button type="button" class="nav-group-head" aria-expanded="false" aria-controls="ng-help"><span class="ng-label">Help &amp; Info</span><i class="bi bi-chevron-down ng-chev" aria-hidden="true"></i></button>
+      <div class="nav-group-body" id="ng-help" role="group" aria-label="Help &amp; Info">
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab8')" data-tab-name="how it works"><i class="bi bi-lightbulb-fill" aria-hidden="true"></i><span class="tb-label">How It Works</span></button>
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab9')" data-tab-name="delivery and payment"><i class="bi bi-truck" aria-hidden="true"></i><span class="tb-label">Delivery &amp; Payment</span></button>
+      <button type="button" class="tab-button whitenho" onclick="openTab(event, 'tab12')" data-tab-name="about us reviews"><i class="bi bi-star-fill" aria-hidden="true"></i><span class="tb-label">About &amp; Reviews</span></button>
+      </div>
+    </section>
+</div>
+<div class="sidebar-footer custom-sidebar-gradient">© 2026</div>
+
+
+  </div>
+
+  <!-- ===== CONTENT AREA ===== -->
+
+  <div class="content-area">
+
+<!-- Header -->
+
+<div class="content-header top-0 shadow-lg custom-header-gradient custom-z-40">
+
+  <div id="breadcrumbTrail" class="breadcrumb-trail"></div>
+
+  <div id="searchContainer" class="search-container">
+    <svg id="searchIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="11" cy="11" r="8"></circle>
+      <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+    </svg>
+    <input type="text" id="searchInput" placeholder="Search Whole Site..." />
+    <button id="clearSearchBtn" class="clear-search-btn" aria-label="Clear search">&times;</button>
+  </div>
+
+  <button id="darkModeToggle" class="dark-mode-toggle" aria-label="Toggle dark mode" title="Toggle dark mode">
+    <i class="bi bi-moon-fill" id="darkModeIcon"></i>
+  </button>
+
+  <button type="button" id="cartBtn" class="dark-mode-toggle hdr-btn" aria-label="Open cart" title="My cart">
+    <i class="bi bi-bag" aria-hidden="true"></i><span id="cartCount" class="hdr-badge" hidden>0</span>
+  </button>
+  <button type="button" id="accountBtn" class="dark-mode-toggle hdr-btn" aria-label="My orders" title="My orders" data-tab="tab6">
+    <i class="bi bi-person" id="accountIcon" aria-hidden="true"></i>
+  </button>
+
+  <div class="dropdown mobile-widgets">
+    <button class="btn btn-sm btn-outline-light text-bg-dark dropdown-toggle dropdown-toggle-center" type="button" data-bs-toggle="dropdown">MENU</button>
+    <ul class="dropdown-menu dropdown-menu-end">
+      <li><button class="dropdown-item btn btn-sm" onclick="openTab(event, 'tab4')">New In &amp; Saved</button></li>
+      <li><button class="dropdown-item btn btn-sm" onclick="openTab(event, 'tab5')">Designers</button></li>
+      <li><button class="dropdown-item btn btn-sm" onclick="openTab(event, 'tab6')">Track Order</button></li>
+      <li><button class="dropdown-item btn btn-sm" onclick="openTab(event, 'tab11')">Sell With Us</button></li>
+      <li><button class="dropdown-item btn btn-sm" onclick="openTab(event, 'connect-content')">Contact Us</button></li>
+    </ul>
+  </div>
+</div>
+
+<!-- Main Content -->
+
+<main class="content-main">
+
+  <!-- TAB 1: Home -->
+
+  <section id="tab1" class="tab-content view">
+    <h6 class="sticky-top">
+      <span class="text-bg-primary btn-sm badge" type="button">CUDWEARS &middot; Made Your Way</span>
+    </h6>
+
+    <hr class="my-2 w-25" />
+    <div class="content">
+
+  <div class="home-hero">
+    <div class="home-hero-copy">
+      <span class="hub-eyebrow" style="color:#D2B27A">Clothing &middot; Footwear &middot; Home</span>
+      <h2>Dress it <em>your way</em></h2>
+      <p>Pick any colour, add your modifications and order from designers across Nigeria. Hire a tailor or rent an outfit too.</p>
+      <div class="home-hero-cta">
+        <button type="button" class="btn btn-success" data-tab="tab3">Start Shopping</button>
+        <button type="button" class="btn btn-ghost" data-reg="store" style="color:#F4F0E8;border-color:rgba(244,240,232,.4)">List Your Business</button>
+      </div>
+    </div>
+  </div>
+  <div class="home-panel" role="list">
+    <div class="home-panel-item" role="listitem"><span class="hp-ico"><i class="bi bi-palette" aria-hidden="true"></i></span><strong>Any Colour</strong><span>Full palette or your own shade</span></div>
+    <div class="home-panel-item" role="listitem"><span class="hp-ico"><i class="bi bi-rulers" aria-hidden="true"></i></span><strong>Made To Measure</strong><span>Your size, your changes</span></div>
+    <div class="home-panel-item" role="listitem"><span class="hp-ico"><i class="bi bi-geo-alt" aria-hidden="true"></i></span><strong>Track Your Order</strong><span>From dye to doorstep</span></div>
+    <div class="home-panel-item" role="listitem"><span class="hp-ico"><i class="bi bi-credit-card-2-front" aria-hidden="true"></i></span><strong>Pay Your Way</strong><span>Transfer, OPay or PocketApp</span></div>
+  </div>
+
+  <div class="card card-section mb-2">
+    <div class="card-header d-flex justify-content-between align-items-center fw-bold">
+      <h3>Shop by Category</h3>
+      <button type="button" class="btn btn-sm btn-success see-all" data-filter="">View All</button>
+    </div>
+    <hr class="mt-2 mb-3" />
+    <div class="card-content row icon-grid row-cols-3 row-cols-sm-5 row-cols-md-6 quote0" id="homeCats"></div>
+  </div>
+
+  <div class="card card-section mb-2">
+    <div class="card-header d-flex justify-content-between align-items-center fw-bold">
+      <h3>Recommended Designs</h3>
+      <button type="button" class="btn btn-sm btn-success see-all" data-tab="tab4">See all</button>
+    </div>
+    <hr class="mt-2 mb-3" />
+    <div id="homeFeatured" class="cw-rail"><p class="note-empty">Loading designs&hellip;</p></div>
+  </div>
+
+  <div class="card card-section mb-2">
+    <div class="card-header fw-bold"><h3>Hire &amp; Rent</h3></div>
+    <hr class="mt-2 mb-3" />
+    <div class="cw-tiles">
+      <button type="button" class="cw-tile" data-svc-group="fashion" data-kind="service" data-svc-type="Tailor"><i class="bi bi-scissors"></i><b>Tailors</b><small>Sew, alter, fit</small></button>
+      <button type="button" class="cw-tile" data-svc-group="fitting" data-kind="service"><i class="bi bi-rulers"></i><b>Fittings</b><small>Get measured</small></button>
+      <button type="button" class="cw-tile" data-svc-group="wear" data-kind="rental"><i class="bi bi-handbag"></i><b>Outfit Rentals</b><small>Gowns, suits, aso-ebi</small></button>
+      <button type="button" class="cw-tile" data-svc-group="bridal" data-kind="rental"><i class="bi bi-heart"></i><b>Bridal Hire</b><small>Gowns &amp; veils</small></button>
+    </div>
+  </div>
+
+  <div class="card card-section mb-2">
+    <div class="card-header d-flex justify-content-between align-items-center fw-bold">
+      <h3>Featured Designers</h3>
+      <button type="button" class="btn btn-sm btn-success see-all" data-tab="tab5">All designers</button>
+    </div>
+    <hr class="mt-2 mb-3" />
+    <div id="homeDesigners" class="view-content list-container"></div>
+  </div>
+
+  <button type="button" class="cw-feat" data-tab="tab10">
+    <span class="cw-feat-pill">CUSTOM</span>
+    <h3>Dress it your way</h3>
+    <p>Any colours, your modifications, your measurements. Book a custom design or fitting.</p>
+    <span class="cw-feat-arrow">&rarr;</span>
+  </button>
+
+    </div>
+  </section>
+
+  <!-- TAB 2: Categories -->
+
+  <section id="tab2" class="tab-content view">
+    <div class="p-2">
+      <h4>Categories</h4>
+      <p class="card card-body alert alert-secondary">
+        Browse everything on CUDWEARS by category. Tap one to see every design in it, or jump to a tailor, fitting or outfit rental.</p>
+    </div>
+    <hr/>
+
+    <div class="custom-max-w-4xl mx-auto">
+      <section>
+        <h2 class="fw-bold text-uppercase mb-4 custom-text-sm custom-tracking-widest custom-text-gray-500">Shop by Category</h2>
+        <div id="classic-regular-icons-container" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3"></div>
+      </section>
+
+      <section class="custom-mt-12">
+        <h2 class="fw-bold text-uppercase mb-4 custom-text-sm custom-tracking-widest custom-text-gray-500">Services &amp; Rentals</h2>
+        <div id="classic-light-icons-container" class="row row-cols-2 row-cols-md-3 row-cols-lg-4 g-3"></div>
+      </section>
+    </div>
+  </section>
+
+  <!-- TAB 3: Market -->
+
+  <section id="tab3" class="tab-content view">
+    <div class="tab3-search-bar">
+      <div class="search-container-view">
+        <i class="bi bi-search"></i>
+        <input type="text" class="view-search" data-target-list="#serviceList" placeholder="Search designs, colours &amp; designers..." />
+      </div>
+    </div>
+    <div id="shopToolbar" class="hub-toolbar"></div>
+    <div id="serviceList" class="view-content list-container cw-grid"></div>
+    <div id="shopEmpty" class="alert alert-secondary m-2" role="status" hidden>
+      Nothing matches yet. Try another filter, or
+      <button type="button" class="btn btn-sm btn-success" data-tab="tab10">ask for a custom design</button>.
+    </div>
+  </section>
+
+  <!-- TAB 4: New In & Saved -->
+
+  <section id="tab4" class="tab-content view">
+    <div class="p-2">
+      <h4>New In &amp; Saved</h4>
+      <p class="card card-body alert alert-secondary">
+        Hand-picked designs, the newest arrivals and the designs you saved with the heart.
+      </p>
+      <div class="seg" role="group" aria-label="Choose a list">
+        <button type="button" class="seg-btn active" data-seg="paneFeat" aria-pressed="true"><i class="bi bi-award" aria-hidden="true"></i> Recommended</button>
+        <button type="button" class="seg-btn" data-seg="paneNew" aria-pressed="false"><i class="bi bi-stars" aria-hidden="true"></i> New</button>
+        <button type="button" class="seg-btn" data-seg="paneSaved" aria-pressed="false"><i class="bi bi-heart" aria-hidden="true"></i> Saved</button>
+      </div>
+      <div id="paneFeat" class="seg-pane"><div class="view-content list-container cw-grid" id="listFeat"></div></div>
+      <div id="paneNew" class="seg-pane" hidden><div class="view-content list-container cw-grid" id="listNew"></div></div>
+      <div id="paneSaved" class="seg-pane" hidden><div class="view-content list-container cw-grid" id="listSaved"></div></div>
+    </div>
+  </section>
+
+  <!-- TAB 5: Designers -->
+
+  <section id="tab5" class="tab-content view">
+    <div class="tab3-search-bar">
+      <div class="search-container-view">
+        <i class="bi bi-search"></i>
+        <input type="text" class="view-search" data-target-list="#sellerList" placeholder="Search designers or areas..." />
+      </div>
+    </div>
+    <div class="p-2">
+      <h4>Designers</h4>
+      <p class="card card-body alert alert-secondary">
+        Tailors, shoemakers and makers selling on CUDWEARS. Tap See Designs to view what each one makes.
+      </p>
+      <div id="sellerList" class="view-content list-container"></div>
+      <div class="text-center my-3"><button type="button" class="btn btn-ghost" data-reg="store">Become a designer on CUDWEARS</button></div>
+    </div>
+  </section>
+
+  <!-- TAB 6: Track Order -->
+
+  <section id="tab6" class="tab-content view">
+    <div class="p-2">
+      <h4>Track Order</h4>
+      <p class="card card-body alert alert-secondary">Orders you place on this phone appear here automatically.</p>
+      <div id="mine"></div>
+      <form class="card card-body mb-2" id="trackForm" novalidate>
+        <h5 class="fw-bold mb-1">Look up an order</h5>
+        <p class="pm-note">Order code plus the phone number or email you ordered with.</p>
+        <div class="mb-2"><input class="form-control" id="tCode" placeholder="Order code e.g. CW-1A2B3C" autocapitalize="characters" /></div>
+        <div class="mb-2"><input class="form-control" id="tPhone" placeholder="Phone number or email" /></div>
+        <div class="text-danger small mb-2" id="tErr" role="alert" hidden></div>
+        <button type="submit" class="btn btn-success">Track</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- TAB 7: Size Guide -->
+
+  <section id="tab7" class="tab-content view">
+    <div class="p-2">
+      <h4>Size Guide</h4>
+      <p class="card card-body alert alert-secondary">Measure once, save it here, and every order starts with your numbers filled in. Saved on this phone only.</p>
+      <form id="measForm" class="card card-body mb-2" novalidate>
+        <h5 class="fw-bold mb-1">My measurements</h5>
+        <p class="pm-note">Use a soft tape, in centimetres or inches, whichever you prefer. Be consistent.</p>
+        <div class="cw-two" id="measFields"></div>
+        <button type="submit" class="btn btn-success mt-2">Save my measurements</button>
+      </form>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-rulers me-2" style="color: var(--color-primary-new)"></i>How to measure</h5>
+        <p class="mb-1"><strong>Chest / Bust:</strong> around the fullest part, tape level under the arms.</p>
+        <p class="mb-1"><strong>Waist:</strong> around the narrowest part, above the belly button.</p>
+        <p class="mb-1"><strong>Hip:</strong> around the fullest part of the hips and seat.</p>
+        <p class="mb-1"><strong>Shoulder:</strong> across the back, bone to bone.</p>
+        <p class="mb-1"><strong>Sleeve:</strong> shoulder tip to wrist with the arm slightly bent.</p>
+        <p class="mb-1"><strong>Length:</strong> from the base of the neck to where you want the hem.</p>
+        <p class="mb-0"><strong>Foot length:</strong> stand on paper, mark heel and longest toe, measure the gap.</p>
+      </div></div>
+      <button type="button" class="btn btn-ghost" data-tab="tab13">Need help? Book a fitting</button>
+    </div>
+  </section>
+
+  <!-- TAB 8: How It Works -->
+
+  <section id="tab8" class="tab-content view">
+    <div class="p-2">
+      <h4>How It Works</h4>
+      <p class="card card-body alert alert-secondary">Ordering on CUDWEARS takes four simple steps, and you pay the way that suits you.</p>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-search me-2" style="color: var(--color-primary-new)"></i>1. Find a design</h5>
+        <p class="mb-0">Browse by category, search for a style or visit a designer. Tap the heart to save designs for later.</p>
+      </div></div>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-palette me-2" style="color: var(--color-primary-new)"></i>2. Make it yours</h5>
+        <p class="mb-0">Pick up to six colours (the photo previews them), choose a size, tick modifications and add your measurements and notes. Ordering several? Each one can be different.</p>
+      </div></div>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-credit-card-2-front me-2" style="color: var(--color-primary-new)"></i>3. Pay the deposit</h5>
+        <p class="mb-0">Place your order, get a tracking ID, then pay the deposit by OPay, PocketApp or bank transfer and send the receipt on WhatsApp. Nothing is charged online.</p>
+      </div></div>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-truck me-2" style="color: var(--color-primary-new)"></i>4. Track &amp; receive</h5>
+        <p class="mb-0">Follow your order under Track while it is made and shipped. Pay the balance before or on delivery.</p>
+      </div></div>
+      <button type="button" class="btn btn-success mt-1" data-tab="tab3">Start shopping</button>
+    </div>
+  </section>
+
+  <!-- TAB 9: Delivery & Payment -->
+
+  <section id="tab9" class="tab-content view">
+    <div class="p-2">
+      <h4>Delivery &amp; Payment</h4>
+      <p class="card card-body alert alert-secondary">How long things take, how to pay, returns, and quick answers.</p>
+      <h5 class="sub-h">Delivery</h5>
+      <div class="card card-body mb-2" id="deliveryInfo"><p class="mb-0">Loading&hellip;</p></div>
+      <h5 class="sub-h">Payment</h5>
+      <div class="card card-body mb-2" id="payInfo"><p class="mb-0">Loading&hellip;</p></div>
+      <h5 class="sub-h">Returns &amp; complaints</h5>
+      <p>Not right? Use <a href="#" data-tab="tab10">Custom &amp; Help</a> to send a return request or complaint with your order code. Made-to-order items are remade or adjusted when the fault is ours.</p>
+      <h5 class="sub-h">FAQ</h5>
+      <div class="accordion mb-2" id="faqAcc">
+        <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq0" aria-expanded="false" aria-controls="faq0">Do I need an account?</button></h2>
+          <div id="faq0" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">No. Your orders, cart and saved designs are remembered on your phone. Keep your tracking ID to look an order up anywhere.</div></div></div>
+        <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1" aria-expanded="false" aria-controls="faq1">Why a deposit?</button></h2>
+          <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Each piece is made or dyed for you, so the deposit covers materials and dye. The balance is paid before or on delivery.</div></div></div>
+        <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2" aria-expanded="false" aria-controls="faq2">Is the colour preview exact?</button></h2>
+          <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">It is a guide. It works best on plain items on a plain background, and the final dye may vary slightly.</div></div></div>
+        <div class="accordion-item"><h2 class="accordion-header"><button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3" aria-expanded="false" aria-controls="faq3">How do I sell or list a service?</button></h2>
+          <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAcc"><div class="accordion-body">Open List Your Business, fill in the short form, and we review it before it goes live.</div></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TAB 10: Custom & Help -->
+
+  <section id="tab10" class="tab-content view">
+    <div class="p-2">
+      <h4>Custom &amp; Help</h4>
+      <p class="card card-body alert alert-secondary">Book a custom design or fitting, request a return, report a problem, or leave a comment.</p>
+      <form id="helpForm" class="card card-body mb-2" novalidate>
+        <div class="mb-2"><label for="hKind" class="form-label">What do you need?</label>
+          <select class="form-select" id="hKind">
+            <option value="booking">Book a custom design / fitting</option>
+            <option value="return">Return request</option>
+            <option value="complaint">Complaint</option>
+            <option value="comment">Comment / feedback</option>
+          </select></div>
+        <div class="mb-2"><input class="form-control" id="hName" placeholder="Your name" autocomplete="name" /></div>
+        <div class="mb-2"><input class="form-control" id="hPhone" type="tel" placeholder="Phone / WhatsApp" autocomplete="tel" /></div>
+        <div class="mb-2"><input class="form-control" id="hEmail" type="email" placeholder="Email (optional)" autocomplete="email" /></div>
+        <div class="mb-2" id="hCodeWrap" hidden><input class="form-control" id="hCode" placeholder="Order code (for returns and complaints)" autocapitalize="characters" /></div>
+        <div class="mb-2" id="hDateWrap"><label for="hDate" class="form-label">Preferred date</label><input class="form-control" id="hDate" type="date" /></div>
+        <div class="mb-2"><textarea class="form-control" id="hText" rows="4" placeholder="Tell us more"></textarea></div>
+        <div class="text-danger small mb-2" id="hErr" role="alert" hidden></div>
+        <div class="pm-note" id="hOk" hidden></div>
+        <button type="submit" class="btn btn-success">Send</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- TAB 11: Sell With Us -->
+
+  <section id="tab11" class="tab-content view">
+    <div class="p-2">
+      <h4>Sell With Us</h4>
+      <p class="card card-body alert alert-secondary">
+        A designer, tailor, shoemaker or outfit-hire business anywhere in Nigeria? Join CUDWEARS.
+      </p>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-people me-2" style="color: var(--color-primary-new)"></i>Reach more customers</h5>
+        <p class="mb-0">Get your own designer page and orders straight to your WhatsApp.</p>
+      </div></div>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-lightning-charge me-2" style="color: var(--color-primary-new)"></i>Simple to start</h5>
+        <p class="mb-0">Fill in the List form. We verify you, then add your designs, photos and prices to the shop.</p>
+      </div></div>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-cash-coin me-2" style="color: var(--color-primary-new)"></i>Keep what you earn</h5>
+        <p class="mb-0">No monthly fee to start. Ask us about our small commission on completed sales.</p>
+      </div></div>
+      <button type="button" class="btn btn-success mt-2 me-2" data-reg="store"><i class="bi bi-shop" aria-hidden="true"></i> Register as a designer</button>
+      <button type="button" class="btn btn-ghost mt-2" data-reg="service"><i class="bi bi-scissors" aria-hidden="true"></i> Offer a service</button>
+    </div>
+  </section>
+
+  <!-- TAB 13: Services -->
+  <section id="tab13" class="tab-content view">
+    <div class="p-2">
+      <div class="hub-head"><span class="hub-eyebrow">Services</span><h2>Tailoring &amp; <em>fittings</em>, near you</h2><p>Tailors, fashion designers, alterations, embroidery and laundry. Filter by category, state, price and rating, then book on WhatsApp.</p></div>
+      <div id="svcApp"></div>
+      <div class="text-center my-3"><button type="button" class="btn btn-ghost" data-reg="service">Offer your service</button></div>
+    </div>
+  </section>
+
+  <!-- TAB 14: Rentals -->
+  <section id="tab14" class="tab-content view">
+    <div class="p-2">
+      <div class="hub-head"><span class="hub-eyebrow">Rentals</span><h2>Outfits to <em>hire</em>, by the day or event</h2><p>Gowns, suits, aso-ebi and traditional attire, bridal wear, jewellery, shoes and bags. Check availability on WhatsApp.</p></div>
+      <div id="rentApp"></div>
+      <div class="text-center my-3"><button type="button" class="btn btn-ghost" data-reg="rental">List a rental</button></div>
+    </div>
+  </section>
+
+  <!-- TAB 15: List -->
+  <section id="tab15" class="tab-content view" data-no-swipe>
+    <div class="p-2" data-no-swipe>
+      <div class="hub-head"><span class="hub-eyebrow">Join CUDWEARS</span><h2>List your <em>business</em></h2><p>Designer, tailor, shoemaker, outfit-hire host or maker? Add yourself here. We check every listing before it goes live.</p></div>
+      <div id="regApp"></div>
+    </div>
+  </section>
+
+  <!-- TAB 12: About -->
+
+  <section id="tab12" class="tab-content view">
+    <div class="p-2">
+      <h4>About &amp; Reviews</h4>
+      <p class="card card-body alert alert-secondary">Made-to-order fashion and home pieces, from designers who do it with care.</p>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-shop me-2" style="color: var(--color-primary-new)"></i>Who we are</h5>
+        <p class="mb-0">CUDWEARS is a Nigerian marketplace for clothing, footwear, bags and home pieces. You choose the colours, size and modifications, and the designer makes it for you. We also connect you with tailors, fitting sessions and outfit rentals.</p>
+      </div></div>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-heart me-2" style="color: var(--color-primary-new)"></i>Our promise</h5>
+        <p class="mb-0">Clear prices, honest timelines, and a real person on WhatsApp from order to delivery.</p>
+      </div></div>
+      <div class="card mb-2"><div class="card-body">
+        <h5 class="fw-bold mb-1"><i class="bi bi-building me-2" style="color: var(--color-primary-new)"></i>Part of CUDFIRM INC.</h5>
+        <p class="mb-0">CUDWEARS is built and run by CUDFIRM INC., a Lagos web design and technology company.</p>
+      </div></div>
+      <button type="button" class="btn btn-primary mt-2" data-tab="connect-content"><i class="bi bi-chat-dots" aria-hidden="true"></i> Contact Us</button>
+    </div>
+  </section>
+
+  <!-- CONNECT CONTENT -->
+
+  <section id="connect-content" class="tab-content view p-4 p-sm-5">
+    <h6 class="sticky-top">
+      <span class="badge text-bg-primary">Connect</span>
+    </h6>
+    <hr class="my-2 w-25" />
+    <div class="contact-container">
+      <h4 class="contact-header">Need help with an order?</h4>
+      <p class="contact-subheader text-center">
+        Ask about a design, a fitting, a delivery or a price. Our team replies fast on WhatsApp.</p>
+      <div class="row g-4">
+        <div class="col-12 col-lg-8">
+<form id="contactForm" onsubmit="handleEmailSubmit(event)">
+  <div class="mb-3">
+    <label for="contactName" class="form-label">Your Name</label>
+    <input type="text" class="form-control" id="contactName" name="name" required />
+  </div>
+  <div class="mb-3">
+    <label for="contactInfo" class="form-label">Your Email or Phone Number</label>
+    <input type="text" class="form-control" id="contactInfo" name="contact_info" required />
+  </div>
+  <div class="mb-3">
+    <label for="contactMessage" class="form-label">How can we help?</label>
+    <textarea class="form-control" id="contactMessage" name="message" rows="5" required></textarea>
+  </div>
+<div class="d-flex flex-column gap-2">
+    <div class="d-flex gap-2">
+        <button type="button" class="btn btn-primary w-100" onclick="sendToAdmin()">
+            <i class="bi bi-send-check"></i> Send Message
+        </button>
+        <button type="button" class="btn btn-whatsapp w-100" onclick="sendToWhatsAppWithForm()">
+            <i class="bi bi-whatsapp"></i> Send To WhatsApp
+        </button>
+    </div>
+    <button type="button" class="btn btn-info w-100" onclick="sendToEmail()">
+        <i class="bi bi-envelope"></i> Send To Email
+    </button>
+</div>
+</form>
+        </div>
+        <div class="col-12 col-lg-4">
+          <div class="quick-contact-box">
+            <h5>Quick Contact</h5>
+            <p>For immediate assistance.</p>
+            <a href="tel:+2349056317709" class="btn btn-warning w-100"><i class="bi bi-telephone"></i> Call Us Directly</a>
+            <!-- Copy phone number -->
+            <button class="btn btn-outline-secondary w-100 mt-2" onclick="copyToClipboard('+2349056317709', 'Phone number copied!')">
+              <i class="bi bi-clipboard"></i> Copy Number
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <footer class="footin" id="footin">
+      <div class="icons-social">
+        <article class="list-social" id="sm">
+          <span class="icons-social__item"><a class="icons-social__link" href="https://wa.me/2348028699824" aria-label="WhatsApp"><i class="icons-social__i fab fa-whatsapp"></i></a></span>
+          <span class="icons-social__item"><a class="icons-social__link" href="#"><i class="icons-social__i fab fa-instagram"></i></a></span>
+                                      </article>
+      </div>
+    </footer>
+  </section>
 </main>
-<nav class="nav" aria-label="Main"><button class="on" data-v="shop"><span>◧</span>Shop</button><button data-v="track"><span>⌖</span>Track</button><button data-v="help"><span>✎</span>Help</button></nav>
-<div class="sheet" id="sheet" role="dialog" aria-modal="true"><div class="scrim" id="scrim"></div><div class="panel" id="panel"></div></div>
-<script src="config.js"></script><script src="js/shared.js"></script>
+
+<button id="backToTopBtn" class="back-to-top" aria-label="Back to top" title="Back to top">
+  <i class="bi bi-arrow-up-short"></i>
+</button>
+
+  </div>
+
+  <!-- ===== FOOTER NAV ===== -->
+
+  <nav class="footer-nav" aria-label="Main">
+    <div class="nav-item" onclick="openTab(event, 'tab1')" data-index="0"><i class="bi bi-house"></i><span class="nav-label">Home</span></div>
+    <div class="nav-item" onclick="openTab(event, 'tab3')" data-index="1"><i class="bi bi-shop"></i><span class="nav-label">Market</span></div>
+    <div class="nav-item" onclick="openTab(event, 'tab13')" data-index="2"><i class="bi bi-scissors"></i><span class="nav-label">Services</span></div>
+    <div class="nav-item" onclick="openTab(event, 'tab14')" data-index="3"><i class="bi bi-handbag"></i><span class="nav-label">Rentals</span></div>
+    <div class="nav-item" onclick="openTab(event, 'tab15')" data-index="4"><i class="bi bi-plus-circle"></i><span class="nav-label">List</span></div>
+  </nav>
+
+  <!-- ===== SIDEBAR RIGHT ===== -->
+
+  <div class="sidebar-right row view">
+    <div class="widget col custom-slate-gradient d-flex flex-column align-items-center justify-content-center gap-1">
+      <span class="live-dot"></span>
+      <strong id="sidebarLiveCount">&mdash;</strong>
+      <small style="font-size:10px;color:#fff;">Online Now</small>
+    </div>
+    <div class="widget col custom-slate-gradient">Any Colour</div>
+    <div class="widget col custom-slate-gradient">Track Your Order</div>
+  </div>
+
+</div>
+
+<!-- ===== CUSTOM MODAL ===== -->
+
+<div id="modal" class="modal-overlay">
+  <div class="modal-content">
+    <button class="modal-close"><i class="bi bi-x-lg"></i></button>
+    <h2 id="modalTitle">Modal Title</h2>
+    <div id="modalBody">
+      <p>This is the modal content.</p>
+    </div>
+  </div>
+</div>
+
+<div id="imageLightbox" class="lightbox-overlay" onclick="closeLightboxOutside(event)">
+    <div class="lightbox-content-wrapper">
+        <img class="lightbox-img" id="lightboxImg" src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs=" alt="Preview" />
+        <div id="lightboxCaption" class="lightbox-caption"></div>
+        <div class="lightbox-actions">
+            <button class="btn-capsule btn-close-capsule" onclick="closeLightbox()">Close</button>
+            <a id="lightboxEnterBtn" href="#" class="btn-capsule btn-enter-capsule">Enter</a>
+        </div>
+    </div>
+</div>
+
+<!-- ===== PRODUCT / CART / ORDER SHEETS (filled by js/wears.js) ===== -->
+<div id="productModal" class="pm-overlay" aria-hidden="true">
+  <div class="pm-dialog cw-dialog" role="dialog" aria-modal="true" aria-label="Design details" tabindex="-1">
+    <button type="button" class="pm-close" data-close aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    <div class="pm-scroll" id="pmBody"></div>
+  </div>
+</div>
+<div id="cartModal" class="pm-overlay" aria-hidden="true">
+  <div class="pm-dialog cw-dialog" role="dialog" aria-modal="true" aria-label="My cart" tabindex="-1">
+    <button type="button" class="pm-close" data-close aria-label="Close cart"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    <div class="pm-scroll" id="cartBody"></div>
+  </div>
+</div>
+<div id="orderModal" class="pm-overlay" aria-hidden="true">
+  <div class="pm-dialog cw-dialog" role="dialog" aria-modal="true" aria-label="Order received" tabindex="-1">
+    <button type="button" class="pm-close" data-close aria-label="Close"><i class="bi bi-x-lg" aria-hidden="true"></i></button>
+    <div class="pm-scroll" id="orderBody"></div>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="config.js"></script>
+<script src="js/shared.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
-<script>
-const sb=supabase.createClient(CFG.url,CFG.key),WA=CFG.wa,$=s=>document.querySelector(s),naira=n=>'₦'+Number(n||0).toLocaleString('en-NG'),copy=CW.copy,toast=CW.toast;
-const E=(t,a={},k=[])=>{const n=document.createElement(t);for(const[x,v]of Object.entries(a)){if(x==='text')n.textContent=v;else if(x.startsWith('on'))n.addEventListener(x.slice(2),v);else if(v===true)n.setAttribute(x,'');else if(v!==false&&v!=null)n.setAttribute(x,v)}[k].flat(9).forEach(c=>c!=null&&c!==false&&n.append(c));return n};
-const LS={get:(k,d)=>{try{const v=JSON.parse(localStorage.getItem(k));return v==null?d:v}catch(e){return d}},set:(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}};
-const img=id=>CFG.url+'/storage/v1/object/public/products/'+id,arrow=()=>E('span',{class:'arr'},['See Details',E('i')]);
-let P=[],cat='',kind='',sort='new',q='',wish=LS.get('cw_wish',[]),S={deposit_pct:60,methods:[],lead_default:'4-6 working days',delivery_info:''};
-async function post(p,b){try{
- if(p==='orders'){const{data,error}=await sb.rpc('place_order',{p_type:b.type,p_name:b.name,p_phone:b.phone||'',p_email:b.email||'',p_address:b.address||'',p_lat:b.lat??null,p_lng:b.lng??null,p_pay:b.pay||'',p_note:b.note||'',p_items:b.items||[]});return error?{error:error.message}:data}
- const{error}=await sb.from('feedback').insert({kind:b.kind,code:(b.code||'').toUpperCase(),name:b.name,phone:b.phone||b.email||'',text:b.text});return error?{error:'Add your name and a message.'}:{ok:true}}catch(e){return{error:'Network problem. Try again.'}}}
-/* ---------- shop ---------- */
-function pcard(p){const open=()=>openP(p);return E('div',{class:'pc',role:'button',tabindex:'0','aria-label':p.name,onclick:open,onkeydown:e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();open()}}},[
- E('div',{class:'pimg'},[p.imgs[0]?E('img',{src:img(p.imgs[0]),alt:p.name,loading:'lazy',decoding:'async'}):E('span',{text:'👗'}),E('button',{class:'heart','aria-label':'Save',text:wish.includes(p.id)?'♥':'♡',onclick:e=>{e.stopPropagation();wish=wish.includes(p.id)?wish.filter(x=>x!==p.id):[...wish,p.id];LS.set('cw_wish',wish);e.target.textContent=wish.includes(p.id)?'♥':'♡';if(cat==='saved')show()}})]),
- E('div',{class:'nm'},[E('b',{text:p.name}),E('span',{class:'pr',text:naira(p.price)})]),E('p',{text:p.desc||p.kind||CW.CATS[p.cat]}),arrow()])}
-function rcard(p){return E('button',{class:'rc',type:'button','aria-label':p.name,onclick:()=>openP(p)},[E('div',{class:'pimg'},[p.imgs[0]?E('img',{src:img(p.imgs[0]),alt:'',decoding:'async'}):E('span',{text:'👗'})]),
- E('div',{},[E('h3',{text:p.name}),E('span',{class:'tag',text:(p.kind||CW.CATS[p.cat])+' · '+(p.lead||S.lead_default)})]),E('div',{class:'row2'},[E('span',{class:'price',text:naira(p.price)}),arrow()])])}
-function carousel(R){const car=E('div',{class:'car'},R.map(rcard)),dots=E('div',{class:'dots'},R.map((_,i)=>E('i',{class:i?'':'on'})));
- car.addEventListener('scroll',()=>{const w=car.firstChild.offsetWidth+14,i=Math.round(car.scrollLeft/w);[...dots.children].forEach((d,k)=>d.classList.toggle('on',k===i))},{passive:true});return E('div',{},[car,R.length>1?dots:null])}
-function feat(){return E('button',{class:'feat',type:'button',onclick:()=>nav('help')},[E('span',{class:'fpill',text:'CUSTOM'}),E('h3',{text:'Dress it your way'}),
- E('span',{class:'farrow'},[E('span',{text:'→',style:'font-size:1.7rem;line-height:1;color:#d6e6fb'})]),E('div',{class:'wave'}),E('p',{text:'Any colours, your modifications, your measurements. Book a custom design or fitting.'})])}
-function show(){const catList=[['','All'],...Object.entries(CW.CATS).filter(([k])=>P.some(p=>p.cat===k)),['saved','♥ Saved']];
- $('#cats').replaceChildren(...catList.map(([v,l])=>E('button',{class:'chip'+(cat===v?' on':''),text:l,onclick:()=>{cat=v;kind='';show()}})));
- const kinds=[...new Set(P.filter(p=>!cat||cat==='saved'||p.cat===cat).map(p=>p.kind||p.sub).filter(Boolean))];
- $('#subs').replaceChildren(...(kinds.length>1?[E('button',{class:'chip'+(!kind?' on':''),text:'Everything',onclick:()=>{kind='';show()}}),...kinds.map(s=>E('button',{class:'chip'+(kind===s?' on':''),text:s,onclick:()=>{kind=s;show()}}))]:[]));
- const L=P.filter(p=>(!cat||(cat==='saved'?wish.includes(p.id):p.cat===cat))&&(!kind||(p.kind||p.sub)===kind)&&(!q||(p.name+' '+p.sub+' '+p.kind+' '+p.desc).toLowerCase().includes(q)));
- if(sort==='low')L.sort((a,b)=>a.price-b.price);if(sort==='high')L.sort((a,b)=>b.price-a.price);
- const filtered=!!(q||cat||kind),srt=E('select',{class:'sort','aria-label':'Sort',onchange:e=>{sort=e.target.value;show()}},[['new','Newest'],['low','Price: low to high'],['high','Price: high to low']].map(([v,l])=>E('option',{value:v,text:l,selected:sort===v})));
- const grid=L.length?E('div',{class:'pgrid'},L.map(pcard)):E('div',{class:'empty',text:cat==='saved'?'Tap the ♡ on a design to save it here.':P.length?'Nothing matches yet. Try another filter.':'New designs are landing soon. Check back shortly.'});
- const bar=E('div',{class:'row',style:'justify-content:space-between;align-items:center;margin-top:8px'},[E('span',{class:'note',text:L.length+(L.length===1?' design':' designs')}),srt]);
- const rec=P.filter(p=>p.featured),R=(rec.length?rec:P.slice(0,6));
- $('#home').replaceChildren(...[filtered?[E('h2',{class:'stitle',text:cat==='saved'?'Saved':'Results'}),bar,grid]:[feat(),R.length?[E('h2',{class:'stitle',text:rec.length?'Recommended':'Latest designs'}),E('p',{class:'ssub',text:'Hand-picked designs, made your way.'}),carousel(R)]:null,E('h2',{class:'stitle',text:'New arrivals'}),E('p',{class:'ssub',text:'Fresh designs, made to order for you.'}),bar,grid]].flat(9).filter(Boolean))}
-function openBrowse(){const cs=Object.entries(CW.CATS).filter(([k])=>P.some(p=>p.cat===k)),cl=['o','t','n'];
- const go=c=>{cat=c;kind='';closeSheet();nav('shop');show()};
- openSheet('Browse',E('div',{class:'tiles'},[...cs.map(([k,l],i)=>E('button',{class:'tile '+cl[i%3],type:'button',onclick:()=>go(k)},[E('b',{text:l}),E('small',{text:P.filter(p=>p.cat===k).length+' designs →'})])),E('button',{class:'tile b',type:'button',onclick:()=>go('saved')},[E('b',{text:'♥ Saved'}),E('small',{text:wish.length+' saved →'})])]),
-  E('div',{class:'row',style:'margin-top:16px'},[E('button',{class:'btn navy',text:'Track my order',onclick:()=>{closeSheet();nav('track')}}),E('button',{class:'btn brass',text:'Book custom design',onclick:()=>{closeSheet();nav('help')}})]))}
-/* ---------- sheet ---------- */
-function openSheet(title,...k){const close=()=>closeSheet();$('#panel').replaceChildren(E('div',{class:'sheet-top'},[E('b',{text:title}),E('button',{class:'closebtn','aria-label':'Close',onclick:close},['✕ Close'])]),...[k].flat(9).filter(Boolean),E('div',{style:'margin-top:18px'},[E('button',{class:'btn ghost',style:'width:100%',onclick:close,text:'Close'})]));$('#sheet').classList.add('on');$('#panel').scrollTop=0;document.body.style.overflow='hidden'}
-function closeSheet(){$('#sheet').classList.remove('on');document.body.style.overflow='';if(location.hash.startsWith('#p='))history.replaceState(null,'',location.pathname)}
-$('#scrim').onclick=closeSheet;addEventListener('keydown',e=>e.key==='Escape'&&closeSheet());
-const chips=(list,get,set)=>{const box=E('div',{class:'row'});const draw=()=>box.replaceChildren(...list.map(v=>E('button',{type:'button',class:'chip'+(get(v)?' on':''),text:v,onclick:()=>{set(v);draw()}})));draw();return box};
-const FIELDS={clothing:['Chest / Bust','Waist','Hip','Length','Shoulder','Sleeve'],footwear:['Foot length (cm)','Foot width'],accessories:['Length','Width','Height']};
-function payCard(m,amt){const row=(l,v,c)=>E('div',{class:'rw'},[E('div',{},[E('small',{text:l}),E('b',{text:v})]),c!=null?E('button',{class:'chip',type:'button',text:'Copy',onclick:()=>copy(c,l+' copied')}):null]);
- const has=m&&(m.account||m.bank||m.name||m.details||m.link);if(!has)return E('div',{class:'info',text:'We will send you the payment details on WhatsApp.'});
- const all=[m.label,m.bank&&'Bank: '+m.bank,m.account&&'Account number: '+m.account,m.name&&'Account name: '+m.name,'Amount: '+naira(amt)].filter(Boolean).join('\n'),link=/^https?:\/\//i.test(m.link||'')?m.link:'';
- return E('div',{class:'paycard'},[E('b',{text:'Pay with '+m.label,style:'font-family:var(--disp);font-weight:400'}),m.bank?row('Bank / app',m.bank):null,m.account?row('Account number',m.account,m.account.replace(/\s/g,'')):null,m.name?row('Account name',m.name,m.name):null,row('Deposit to pay',naira(amt),String(amt)),
-  m.details?E('div',{class:'pre',style:'margin-top:8px;font-size:.9rem',text:m.details}):null,
-  E('div',{class:'row',style:'margin-top:12px'},[link?E('a',{class:'btn brass',href:link,target:'_blank',rel:'noopener',text:'Pay with '+m.label+' now'}):null,E('button',{class:'chip',type:'button',text:'Copy all details',onclick:()=>copy(all,'Payment details copied')})])])}
-function openP(p){
- history.replaceState(null,'','#p='+p.id);
- const me=LS.get('cw_me',{}),meas0=LS.get('cw_meas',{}),lead=p.lead||S.lead_default,mk=FIELDS[p.cat]||FIELDS.clothing;
- const blank=src=>({cols:src?src.cols.map(c=>({...c})):[],size:src?src.size:'',mods:new Set(src?[...src.mods]:[]),note:src?src.note:'',meas:src?{...src.meas}:{...meas0}});
- const s={copies:[blank()],cur:0,prev:null,imgI:0,pay:(S.methods[0]||{}).label||'',loc:null},C=()=>s.copies[s.cur];
- const main=E('div',{class:'main-img'},p.imgs[0]?[E('img',{src:img(p.imgs[0]),alt:p.name})]:[E('span',{text:'👗'})]),pvnote=E('div',{class:'pvnote'});
- const thumbs=p.imgs.length>1?E('div',{class:'thumbs'},p.imgs.map((id,i)=>E('img',{src:img(id),alt:'View '+(i+1),class:i?'':'on',onclick:e=>{s.imgI=i;thumbs.querySelectorAll('img').forEach(x=>x.classList.remove('on'));e.target.classList.add('on');showPrev()}}))):null;
- async function showPrev(){if(!p.imgs.length)return;const im=main.firstChild,orig=img(p.imgs[s.imgI]),c=C().cols[s.prev];
-  if(!c){im.src=orig;pvnote.textContent=C().cols.length?'Tap a chosen colour to preview it on the photo.':'';return}
-  pvnote.textContent='Preparing preview…';try{const u=await CW.recolor(orig,c.hex);if(C().cols[s.prev]===c){im.src=u;pvnote.textContent='Previewing '+c.name+' on Item '+(s.cur+1)+'. A guide only, the final dye may vary slightly.'}}catch(e){im.src=orig;pvnote.textContent='Preview is not available for this photo.'}}
- /* one editor per copy: colours, size, modifications, measurements, note */
- const tabs=E('div',{class:'chips',style:'padding:6px 0 0'}),editor=E('div');
- function drawTabs(){tabs.replaceChildren(...(s.copies.length>1?s.copies.map((_,i)=>E('button',{type:'button',class:'chip'+(i===s.cur?' on':''),text:'Item '+(i+1),onclick:()=>{s.cur=i;s.prev=C().cols.length?0:null;drawTabs();drawEditor();showPrev()}})):[]))}
- function drawEditor(){const c=C(),grid=E('div',{class:'sws'}),sel=E('div',{class:'selcols'}),has=n=>c.cols.some(x=>x.name===n);
-  const drawC=()=>{grid.replaceChildren(...CW.COLORS.map(([n,h])=>E('button',{type:'button',class:'sw'+(has(n)?' on':''),title:n,onclick:()=>{if(has(n)){c.cols.splice(c.cols.findIndex(x=>x.name===n),1);s.prev=c.cols.length?Math.min(s.prev??0,c.cols.length-1):null;drawC();showPrev()}else addCol({name:n,hex:h})}},[E('i',{class:'dot',style:'background:'+h}),E('span',{text:n})])));
-   sel.replaceChildren(...c.cols.map((x,i)=>E('span',{class:'selc'+(s.prev===i?' pv':'')},[E('button',{type:'button',onclick:()=>{s.prev=s.prev===i?null:i;drawC();showPrev()}},[E('i',{class:'dot cdot',style:'background:'+x.hex}),x.name]),E('button',{type:'button','aria-label':'Remove '+x.name,text:'×',onclick:()=>{c.cols.splice(i,1);s.prev=c.cols.length?0:null;drawC();showPrev();money()}})])));money()};
-  function addCol(x){if(has(x.name))return;if(c.cols.length>=6){toast('Up to 6 colours');return}c.cols.push(x);s.prev=c.cols.length-1;drawC();showPrev()}
-  const custom=E('input',{type:'color',value:'#465f9f','aria-label':'Pick any other colour',style:'width:52px;height:46px;border:0;background:none;padding:0',onchange:e=>addCol({name:CW.nearest(e.target.value)+' (custom '+e.target.value.toUpperCase()+')',hex:e.target.value})});drawC();
-  const mi=mk.map(k=>E('input',{class:'f',placeholder:k,'aria-label':k,value:c.meas[k]||'',oninput:e=>c.meas[k]=e.target.value}));
-  const note=E('textarea',{class:'f',placeholder:'e.g. "wine for the body, gold trim", fabric choice…',oninput:e=>c.note=e.target.value});note.value=c.note;
-  editor.replaceChildren(...[E('div',{class:'lbl',text:'Item '+(s.cur+1)+(s.copies.length>1?' of '+s.copies.length:'')+': colours (any you like, up to 6)'}),grid,E('div',{class:'row',style:'align-items:center;margin-top:6px'},[custom,E('span',{class:'note',text:'Pick any other colour'})]),sel,
-   p.sizes.length?[E('div',{class:'lbl',text:'Size'}),chips(p.sizes,v=>c.size===v,v=>{c.size=v;money()})]:null,
-   E('details',{class:'dd'},[E('summary',{text:'My measurements (optional)'}),E('div',{class:'in'},[E('p',{class:'note',style:'margin-top:0',text:'Saved on this phone for next time.'}),E('div',{class:'gg'},mi)])]),
-   p.mods.length?[E('div',{class:'lbl',text:'Modifications (optional)'}),chips(p.mods,v=>c.mods.has(v),v=>{c.mods.has(v)?c.mods.delete(v):c.mods.add(v);money()})]:null,
-   E('div',{class:'lbl',text:'Anything else you want changed?'}),note,
-   s.cur>0?E('button',{type:'button',class:'chip',style:'margin-top:10px',text:'Copy choices from Item 1',onclick:()=>{s.copies[s.cur]=blank(s.copies[0]);s.prev=null;drawEditor();showPrev();money()}}):null].flat(9).filter(Boolean))}
- /* contact, address, payment */
- const f={n:E('input',{class:'f',placeholder:'Your name',autocomplete:'name',value:me.n||''}),ph:E('input',{class:'f',type:'tel',placeholder:'Phone / WhatsApp',autocomplete:'tel',value:me.ph||''}),em:E('input',{class:'f',type:'email',placeholder:'Email (optional)',autocomplete:'email',value:me.em||''}),ad:E('textarea',{class:'f',placeholder:'House number, street, area, city, state (optional)'})};f.ad.value=me.ad||'';
- const locNote=E('div',{class:'note',style:'margin-top:6px'}),locBtn=E('button',{type:'button',class:'chip',text:'📍 Use my location',onclick:()=>{if(!navigator.geolocation){locNote.textContent='Location is not available on this device.';return}locNote.textContent='Finding you…';navigator.geolocation.getCurrentPosition(r=>{s.loc={lat:+r.coords.latitude.toFixed(6),lng:+r.coords.longitude.toFixed(6)};locNote.replaceChildren('Location saved ✓ ',E('a',{href:'https://www.google.com/maps?q='+s.loc.lat+','+s.loc.lng,target:'_blank',rel:'noopener',text:'View on Google Maps'}))},()=>{locNote.textContent='Could not get your location. You can type the address instead.'},{enableHighAccuracy:true,timeout:12000})}});
- const addr=E('details',{class:'dd'},[E('summary',{text:'Add delivery address (optional)'}),E('div',{class:'in'},[E('p',{class:'note',style:'margin-top:0',text:'You can skip this. If you do, we will ask for delivery details on WhatsApp.'}),f.ad,E('div',{class:'row',style:'margin-top:8px'},[locBtn,E('a',{class:'chip',href:'https://www.google.com/maps',target:'_blank',rel:'noopener',text:'🗺 Open Google Maps'})]),locNote])]);if(f.ad.value)addr.open=true;
- const qv=E('span'),sum=E('div',{class:'sumbox'}),err=E('p',{class:'err',hidden:true}),go=E('button',{class:'btn brass',type:'button',text:'Place order'}),pct=S.deposit_pct;
- function money(){const n=s.copies.length,t=p.price*n,d=Math.ceil(t*pct/100);qv.textContent=n;
-  sum.replaceChildren(...s.copies.map((c,i)=>E('div',{class:'li note'},[E('span',{text:'Item '+(i+1)+': '+([c.size,c.cols.map(x=>x.name.replace(/ \(custom.*/,'')).join(', '),c.mods.size?c.mods.size+' modification'+(c.mods.size>1?'s':''):''].filter(Boolean).join(' · ')||'as in photo')}),E('span',{text:naira(p.price)})])),E('hr'),E('div',{class:'li'},[E('b',{text:'Total ('+n+' item'+(n>1?'s':'')+')'}),E('b',{text:naira(t)})]),E('div',{class:'li'},[E('span',{text:pct+'% deposit to start (materials and dye)'}),E('b',{text:naira(d)})]),E('div',{class:'li'},[E('span',{text:'Balance before / on delivery'}),E('span',{text:naira(t-d)})]))}
- const setQty=n=>{n=Math.max(1,Math.min(10,n));while(s.copies.length<n)s.copies.push(blank(s.copies[s.copies.length-1]));while(s.copies.length>n)s.copies.pop();if(s.cur>=n)s.cur=n-1;if(s.prev!=null&&!C().cols[s.prev])s.prev=null;drawTabs();drawEditor();money();showPrev()};
- const payBox=S.methods.length?E('div',{},[E('div',{class:'lbl',text:'How would you like to pay your deposit?'}),chips(S.methods.map(m=>m.label),v=>s.pay===v,v=>s.pay=v),E('p',{class:'note',text:'No online payment is forced. Pay by bank transfer or the app you prefer, then send us your receipt on WhatsApp.'})]):null;
- const share=E('button',{class:'btn ghost',type:'button',text:'Share',onclick:()=>{const url=location.origin+'/p/'+p.id;navigator.share?navigator.share({title:p.name+' | CUDWEARS',text:p.name+' on CUDWEARS',url}).catch(()=>{}):copy(url,'Link copied')}});
- const saveBtn=E('button',{class:'btn ghost',type:'button',text:wish.includes(p.id)?'♥ Saved':'♡ Save',onclick:e=>{wish=wish.includes(p.id)?wish.filter(x=>x!==p.id):[...wish,p.id];LS.set('cw_wish',wish);e.target.textContent=wish.includes(p.id)?'♥ Saved':'♡ Save';show()}});
- function fail(m){err.textContent=m;err.hidden=false;err.scrollIntoView({block:'center',behavior:'smooth'})}
- go.onclick=async()=>{err.hidden=true;const N=s.copies.length;
-  for(let i=0;i<N;i++)if(p.sizes.length&&!s.copies[i].size){s.cur=i;s.prev=null;drawTabs();drawEditor();showPrev();return fail('Item '+(i+1)+': choose a size (or enter measurements and pick the closest size).')}
-  LS.set('cw_meas',s.copies[0].meas);const mt=c=>mk.map(k=>c.meas[k]&&String(c.meas[k]).trim()?k+' '+String(c.meas[k]).trim():'').filter(Boolean);
-  const items=s.copies.map((c,i)=>({pid:p.id,qty:1,colours:c.cols,size:c.size,mods:[...c.mods],note:[N>1?'Item '+(i+1)+' of '+N:'',c.note.trim(),mt(c).length?'Measurements: '+mt(c).join(', '):''].filter(Boolean).join('\n')}));
-  go.disabled=true;go.textContent='Sending…';const r=await post('orders',{type:'order',name:f.n.value,phone:f.ph.value,email:f.em.value,address:f.ad.value,lat:s.loc&&s.loc.lat,lng:s.loc&&s.loc.lng,pay:s.pay,items});
-  go.disabled=false;go.textContent='Place order';if(r.error)return fail(r.error);
-  LS.set('cw_me',{n:f.n.value.trim(),ph:f.ph.value.trim(),em:f.em.value.trim(),ad:f.ad.value.trim()});
-  const list=LS.get('cw_orders',[]);list.unshift({code:r.code,contact:f.ph.value.trim()||f.em.value.trim(),name:p.name,at:Date.now()});LS.set('cw_orders',list.slice(0,30));renderMine();done(r)};
- function done(r){const m=S.methods.find(x=>x.label===s.pay),msg='Hello CUDWEARS, my order is '+r.code+' ('+p.name+'). I am paying the '+naira(r.deposit)+' deposit'+(s.pay?' by '+s.pay:'')+'. Receipt attached.';
-  openSheet('Order received',E('div',{style:'text-align:center'},[E('h2',{text:'Thank you!'}),E('p',{class:'note',text:'Your tracking ID'}),E('h2',{text:r.code,style:'letter-spacing:.1em;margin-top:4px'}),E('div',{class:'row',style:'justify-content:center;margin:10px 0'},[E('button',{class:'btn ghost',text:'Copy tracking ID',onclick:()=>copy(r.code,'Tracking ID copied')}),E('button',{class:'btn ghost',text:'Track order',onclick:()=>{closeSheet();nav('track')}})]),E('p',{class:'note',text:'Saved on this phone, so you can find it under Track anytime.'})]),
-  m?payCard(m,r.deposit):E('div',{class:'info',text:'We will send you the payment details on WhatsApp.'}),E('p',{class:'note',text:'Balance of '+naira(r.total-r.deposit)+' is paid before or on delivery.'}),
-  E('div',{class:'info'},['Estimated delivery: ',E('b',{text:lead}),' after your deposit is confirmed.']),
-  E('div',{class:'row',style:'margin-top:12px'},[E('a',{class:'btn brass',href:'https://wa.me/'+WA+'?text='+encodeURIComponent(msg),target:'_blank',rel:'noopener',text:'Send receipt on WhatsApp'})]))}
- drawTabs();drawEditor();money();
- openSheet(p.name,main,thumbs,pvnote,E('h2',{text:p.name,style:'margin-top:12px'}),E('div',{class:'price',style:'font-size:1.2rem',text:naira(p.price)}),p.desc?E('p',{text:p.desc}):null,
-  E('div',{class:'info'},['🚚 Estimated delivery: ',E('b',{text:lead}),S.delivery_info?E('details',{style:'margin-top:6px'},[E('summary',{text:'Delivery information',style:'cursor:pointer;font-weight:600'}),E('div',{class:'pre',text:S.delivery_info})]):null]),
-  E('div',{class:'lbl',text:'How many?'}),E('div',{class:'row',style:'align-items:center'},[E('div',{class:'qty'},[E('button',{type:'button','aria-label':'Fewer',text:'−',onclick:()=>setQty(s.copies.length-1)}),qv,E('button',{type:'button','aria-label':'More',text:'+',onclick:()=>setQty(s.copies.length+1)})]),E('span',{class:'note',text:'Each item can have its own size, colours and modifications.'})]),tabs,editor,
-  E('div',{class:'lbl',text:'Your details'}),E('div',{class:'two'},[f.n,f.ph]),E('div',{style:'margin-top:10px'},[f.em]),E('p',{class:'note',text:'Name and one contact (phone/WhatsApp or email) is all we need.'}),addr,
-  payBox,sum,err,E('div',{class:'row',style:'margin-top:14px;align-items:center'},[go,saveBtn,share]))}
-function nav(v){document.querySelectorAll('.view').forEach(x=>x.classList.toggle('on',x.id==='v-'+v));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.v===v));scrollTo(0,0);if(v==='track')renderMine()}
-document.querySelectorAll('.nav button').forEach(b=>b.onclick=()=>nav(b.dataset.v));$('#meBtn').onclick=()=>nav('track');$('#browseBtn').onclick=openBrowse;
-$('#q').oninput=e=>{q=e.target.value.toLowerCase().trim();nav('shop');show()};
-/* ---------- tracking (remembered in this browser) ---------- */
-const FLOW=['pending','confirmed','in_production','shipped','delivered'],LAB={pending:'Pending',confirmed:'Confirmed',in_production:'Being made',shipped:'On the way',delivered:'Delivered',failed:'Delivery failed',returned:'Returned',cancelled:'Cancelled'};
-const lookup=(code,contact)=>sb.rpc('track_order',{p_code:code,p_phone:contact}).then(x=>x.data||null,()=>null);
-function trackCard(r,contact){const i=FLOW.indexOf(r.status),bal=Math.max(0,r.total-r.paid);
- return E('div',{class:'box'},[E('div',{class:'li'},[E('b',{text:r.code}),E('span',{class:'st '+r.status,text:LAB[r.status]||r.status})]),
-  E('div',{class:'row',style:'margin:8px 0'},[E('button',{class:'chip',text:'Copy tracking ID',onclick:()=>copy(r.code,'Tracking ID copied')}),contact?E('button',{class:'chip',text:'Forget',onclick:()=>{LS.set('cw_orders',LS.get('cw_orders',[]).filter(o=>o.code!==r.code));renderMine()}}):null]),
-  i>-1?E('div',{class:'steps'},FLOW.map((x,k)=>E('i',{class:k<=i?'on':'',text:LAB[x]}))):null,
-  ...(r.items||[]).map((x,n)=>E('p',{style:'margin:4px 0'},[E('b',{text:x.qty+' × '+x.name}),(x.colours||[]).length?' · '+x.colours.map(c=>c.name).join(', '):'',x.size?' · '+x.size:''])),
-  r.type==='order'?E('p',{class:'note',style:'margin:6px 0',text:'Total '+naira(r.total)+' · Paid '+naira(r.paid)+' · Balance '+naira(bal)+(r.paid<r.deposit_due?' · Deposit due '+naira(r.deposit_due-r.paid):'')}):null,
-  r.expected_date?E('div',{class:'info'},['Expected delivery: ',E('b',{text:new Date(r.expected_date+'T00:00').toLocaleDateString('en-NG',{weekday:'short',day:'numeric',month:'long',year:'numeric'})})]):null,
-  r.admin_note?E('div',{class:'info pre',text:r.admin_note}):null])}
-async function renderMine(){const list=LS.get('cw_orders',[]),box=$('#mine');if(!list.length){box.replaceChildren();return}
- box.replaceChildren(E('div',{class:'lbl',text:'My orders'}),...list.map(o=>E('div',{class:'box',id:'m-'+o.code},[E('b',{text:o.code}),E('span',{class:'note',text:' loading…'})])));
- for(const o of list){const r=await lookup(o.code,o.contact),el=document.getElementById('m-'+o.code);if(el)el.replaceWith(r?trackCard(r,true):E('div',{class:'box'},[E('b',{text:o.code}),E('p',{class:'note',text:'Could not load this order right now.'})]))}}
-$('#trackForm').onsubmit=async e=>{e.preventDefault();const er=$('#tErr');er.hidden=true;const code=$('#tCode').value.trim().toUpperCase(),c=$('#tPhone').value.trim(),r=await lookup(code,c);
- if(!r){er.textContent='No order found. Check the code and your phone number or email.';er.hidden=false;return}
- const list=LS.get('cw_orders',[]);if(!list.some(o=>o.code===r.code)){list.unshift({code:r.code,contact:c,name:'',at:Date.now()});LS.set('cw_orders',list.slice(0,30))}renderMine();toast('Order saved on this phone')};
-$('#helpForm').onsubmit=async e=>{e.preventDefault();const k=$('#hKind').value,er=$('#hErr'),ok=$('#hOk');er.hidden=ok.hidden=true;
- const b={name:$('#hName').value,phone:$('#hPhone').value,email:$('#hEmail').value,code:$('#hCode').value,text:$('#hText').value},
- r=k==='booking'?await post('orders',{type:'booking',name:b.name,phone:b.phone,email:b.email,note:'Preferred date: '+($('#hDate').value||'any')+'\n'+b.text}):await post('feedback',{...b,kind:k});
- if(r.error){er.textContent=r.error;er.hidden=false;return}if(r.code){const l=LS.get('cw_orders',[]);l.unshift({code:r.code,contact:b.phone||b.email,name:'Booking',at:Date.now()});LS.set('cw_orders',l.slice(0,30))}
- ok.textContent=r.code?'Booking received. Your reference is '+r.code+' (saved under Track). We will contact you to confirm.':'Thank you. We have received your message.';ok.hidden=false;$('#helpForm').reset()};
-$('#hKind').onchange=()=>{$('#hDate').hidden=$('#hKind').value!=='booking'};
-const nm=LS.get('cw_me',{});if(nm.n){$('#hName').value=nm.n;$('#hPhone').value=nm.ph||'';$('#hEmail').value=nm.em||''}
-const settingsP=sb.from('settings').select('*').eq('id',1).maybeSingle().then(({data})=>{if(data)S={deposit_pct:data.deposit_pct??60,methods:data.methods||[],lead_default:data.lead_default||S.lead_default,delivery_info:data.delivery_info||''}}).catch(()=>{});
-settingsP.then(()=>sb.from('products').select('*').eq('active',true).order('created_at',{ascending:false})).then(({data:d})=>{P=(d||[]).map(p=>({...p,desc:p.descr,kind:p.kind||'',featured:!!p.featured,colours:[],sizes:p.sizes||[],mods:p.mods||[],imgs:p.imgs||[]}));show();const m=location.hash.match(/^#p=([\w-]+)/),x=m&&P.find(y=>y.id===m[1]);if(x)openP(x)}).catch(()=>{show()});
-</script></body></html>
+<script src="js/script.js" defer></script>
+<script src="js/wears.js" defer></script>
+<script src="js/hub.js" defer></script>
+<script src="js/sidebar.js" defer></script>
+
+  </body>
+</html>
