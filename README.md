@@ -15,7 +15,7 @@ CUDMAZE's layout (header, sidebar, Home / Market / Services / Rentals / List bar
 1. Supabase > SQL Editor: paste `setup/supabase.sql`, change PUT-YOUR-EMAIL-HERE to your admin email (first run only), Run. Safe to re-run.
 2. Supabase > Authentication > Users: add that email with a password.
 3. Put your project URL, anon key and WhatsApp number in `config.js`.
-4. Deploy the folder to Netlify (netlify.toml included; it powers the /p/ share previews).
+4. Deploy this project to Cloudflare Pages from GitHub. The `functions/p/[id].js` file powers the `/p/<id>` share previews.
 
-## Removed from CUDMAZE
-Cloudflare worker, D1 database and the login/register pages (they cannot run on Netlify + Supabase). Cart, orders and saved designs are kept on the customer's phone instead.
+## Hosting
+This project uses Cloudflare Pages with Pages Functions for product-share previews. Supabase remains the database, authentication and storage provider. Cart, orders and saved designs are kept on the customer's phone instead.

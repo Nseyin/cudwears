@@ -7,7 +7,7 @@ self.addEventListener("activate", (e) => {
 });
 self.addEventListener("fetch", (e) => {
   const req = e.request, url = new URL(req.url);
-  if (req.method !== "GET" || url.hostname.endsWith("supabase.co") || url.pathname.startsWith("/.netlify/") || url.pathname.startsWith("/p/")) return;
+  if (req.method !== "GET" || url.hostname.endsWith("supabase.co") || url.pathname.startsWith("/p/")) return;
   e.respondWith(fetch(req).then(resp => {
     if (resp && resp.ok && (url.origin === location.origin || /cdn|fonts/.test(url.hostname))) { const copy = resp.clone(); caches.open(CACHE).then(c => c.put(req, copy)); }
     return resp;

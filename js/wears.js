@@ -488,25 +488,7 @@
   document.addEventListener('keydown', function (e) { if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role="button"][data-filter]')) { e.preventDefault(); e.target.click(); } });
   window.addEventListener('hashchange', function () { var m = location.hash.match(/^#p=([\w-]+)/); if (m && window.CWX._loaded) window.CWX.openProduct(m[1]); });
 
-  /* hide the "Powered by Netlify" badge (injected on free plans): CSS in wears.css plus a sweep for anything fixed-position that mentions Netlify */
-  (function () {
-    var mine = /^(app-container|readingProgressBar|toastNotification|modal|imageLightbox|productModal|cartModal|orderModal|backToTopBtn)$/;
-    function kill(el) { try { el.style.setProperty('display', 'none', 'important'); el.setAttribute('aria-hidden', 'true'); if (el.parentNode && /netlify/i.test(el.id + el.className + (el.tagName || ''))) el.remove(); } catch (e) {} }
-    function sweep() {
-      [document.body, document.documentElement].forEach(function (root) {
-        Array.prototype.forEach.call(root.children, function (el) {
-          if (/^(SCRIPT|STYLE|LINK|META|HEAD|BODY|NOSCRIPT)$/.test(el.tagName) || mine.test(el.id) || /(^|\s)(app-container|toast-notification|pm-overlay|modal-overlay|lightbox-overlay|modal|back-to-top|dropdown-menu)(\s|$)/.test(el.className || '')) return;
-          var txt = (el.textContent || '') + ' ' + (el.id || '') + ' ' + (el.className && el.className.baseVal === undefined ? el.className : '');
-          var host = el.shadowRoot ? el.shadowRoot.textContent : '';
-          if (/netlify/i.test(txt + host) || (el.tagName === 'IFRAME' && /netlify/i.test(el.src || ''))) kill(el);
-        });
-      });
-    }
-    sweep();
-    if (window.MutationObserver) new MutationObserver(sweep).observe(document.documentElement, { childList: true, subtree: false });
-    if (window.MutationObserver) new MutationObserver(sweep).observe(document.body, { childList: true, subtree: false });
-    var n = 0, t = setInterval(function () { sweep(); if (++n > 20) clearInterval(t); }, 1000);
-  })();
+
 
   /* quick CUDWEARS-style install of the manifest fallback + service worker (cache-bust friendly) */
   if ('serviceWorker' in navigator && location.protocol === 'https:') { navigator.serviceWorker.register('js/sw.js').catch(function () {}); }
