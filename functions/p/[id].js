@@ -5,7 +5,7 @@ export async function onRequest({ request }) {
   if (!/^[0-9a-f-]{36}$/i.test(id)) return Response.redirect(u.origin + '/', 302);
   try {
     const txt = await (await fetch(u.origin + '/config.js')).text();
-    const g = k => (txt.match(new RegExp('\\b' + k + '\\s*:\\s*[\"\\']([^\"\\']+)[\"\\']')) || [])[1];
+    const g = k => (txt.match(new RegExp(k + String.raw`\s*:\s*["']([^"']+)["']`)) || [])[1];
     const base = g('url'), key = g('key');
     if (!base || !key) return Response.redirect(u.origin + '/', 302);
     const response = await fetch(`${base}/rest/v1/products?id=eq.${encodeURIComponent(id)}&active=eq.true&select=*`, { headers: { apikey: key, authorization: 'Bearer ' + key } });
